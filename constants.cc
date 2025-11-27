@@ -78,4 +78,8 @@ export namespace GameConstants {
     constexpr int INVALID_BLOCK_ID = -1;
     constexpr int INITIAL_BLOCK_ID = 0;
     constexpr int INITIAL_SCORE = 0;
+
+    // Padding values for text display
+
+    constexpr int NEXT_PIECE_PADDING = 8;
 }
