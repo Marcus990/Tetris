@@ -275,7 +275,9 @@ public:
         commands["down"] = std::make_unique<DownCommand>();
         commands["drop"] = std::make_unique<DropCommand>();
         commands["clockwise"] = std::make_unique<RotateClockwiseCommand>();
+        commands["cw"] = std::make_unique<RotateClockwiseCommand>();
         commands["counterclockwise"] = std::make_unique<RotateCounterClockwiseCommand>();
+        commands["ccw"] = std::make_unique<RotateCounterClockwiseCommand>();
         commands["levelup"] = std::make_unique<LevelUpCommand>();
         commands["leveldown"] = std::make_unique<LevelDownCommand>();
         commands["random"] = std::make_unique<RandomCommand>();
