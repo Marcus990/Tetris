@@ -421,7 +421,16 @@ public:
         // Recreate levels
         createLevels(startLevel);
 
-        // Reattach displays
+        // Update board pointers in displays before reattaching
+        textDisplay1->setBoard(board1.get());
+        textDisplay2->setBoard(board2.get());
+
+        if (!textOnly) {
+            graphicsDisplay1->setBoard(board1.get());
+            graphicsDisplay2->setBoard(board2.get());
+        }
+
+        // Reattach displays to new boards
         board1->attach(textDisplay1.get());
         board2->attach(textDisplay2.get());
 

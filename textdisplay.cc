@@ -27,6 +27,10 @@ public:
         blindMode = blind;
     }
 
+    void setBoard(Board* b) {
+        board = b;
+    }
+
     void render() {
         const auto& grid = board->getGrid();
         Block* current = board->getCurrentBlock();

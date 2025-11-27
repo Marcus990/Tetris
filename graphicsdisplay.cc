@@ -77,6 +77,10 @@ public:
         blindMode = blind;
     }
 
+    void setBoard(Board* b) {
+        board = b;
+    }
+
     void drawBlock(int row, int col, int color) {
         int x = offsetX + col * blockSize;
         int y = offsetY + row * blockSize;
