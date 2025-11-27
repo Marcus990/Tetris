@@ -78,4 +78,3 @@ void Xwindow::present() {
   XCopyArea(d, pixmap, w, gc, 0, 0, window_width, window_height, 0, 0);
   XFlush(d);
 }
-
