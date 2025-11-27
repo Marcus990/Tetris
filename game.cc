@@ -15,7 +15,7 @@ import constants;
 
 using namespace GameConstants;
 
-export class Game{
+export class Game {
     std::unique_ptr<Board> board1;
     std::unique_ptr<Board> board2;
     std::unique_ptr<Level> level1;
@@ -496,8 +496,8 @@ public:
         Block *next1 = board1->getNextBlock();
         Block *next2 = board2->getNextBlock();
 
-        std::vector<std::string> g1(2, std::string(4, ' '));
-        std::vector<std::string> g2(2, std::string(4, ' '));
+        std::vector<std::string> g1(3, std::string(4, ' '));
+        std::vector<std::string> g2(3, std::string(4, ' '));
 
         if (next1)
         {
@@ -505,7 +505,7 @@ public:
             {
                 int r = cell.first;
                 int c = cell.second;
-                if (r >= 0 && r < 2 && c >= 0 && c < 4)
+                if (r >= 0 && r < 3 && c >= 0 && c < 4)
                     g1[r][c] = next1->getType();
             }
         }
@@ -516,13 +516,13 @@ public:
             {
                 int r = cell.first;
                 int c = cell.second;
-                if (r >= 0 && r < 2 && c >= 0 && c < 4)
+                if (r >= 0 && r < 3 && c >= 0 && c < 4)
                     g2[r][c] = next2->getType();
             }
         }
 
         // Print next blocks side-by-side (pad to 24 chars per section)
-        for (int row = 0; row < 2; row++)
+        for (int row = 0; row < 3; row++)
         {
             std::cout << BOLD << CYAN << "║ " << RESET;
             for (int col = 0; col < 4; col++)
@@ -624,7 +624,9 @@ public:
         {
             auto effect = new HeavyEffect();
             opponent->addEffect(effect);
-        } else if (action == "force") {
+        }
+        else if (action == "force")
+        {
             // Force effect replaces opponent's current block immediately
             opponent->replaceCurrentBlock(blockType);
         }
