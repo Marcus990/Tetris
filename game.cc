@@ -15,8 +15,7 @@ import constants;
 
 using namespace GameConstants;
 
-export class Game
-{
+export class Game{
     std::unique_ptr<Board> board1;
     std::unique_ptr<Board> board2;
     std::unique_ptr<Level> level1;
