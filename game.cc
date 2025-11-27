@@ -126,32 +126,12 @@ public:
 
         if (!board->getNextBlock()) {
             // First block - create it
-            char forcedType = board->getForcedBlockType();
-            std::unique_ptr<Block> block;
-
-            if (forcedType != '\0') {
-                // Create the forced block type
-                block = level->createBlockFromType(forcedType, board->getNextBlockId());
-                board->clearForcedBlockType();  // Consume the force effect
-            } else {
-                block = level->generateBlock(board->getNextBlockId());
-            }
+            std::unique_ptr<Block> block = level->generateBlock(board->getNextBlockId());
             board->setNextBlock(std::move(block));
         } else {
             // Move next to current, generate new next
             board->setCurrentBlock(board->takeNextBlock());
-
-            // Check for forced block type when generating next block
-            char forcedType = board->getForcedBlockType();
-            std::unique_ptr<Block> newNext;
-
-            if (forcedType != '\0') {
-                // Create the forced block type
-                newNext = level->createBlockFromType(forcedType, board->getNextBlockId());
-                board->clearForcedBlockType();  // Consume the force effect
-            } else {
-                newNext = level->generateBlock(board->getNextBlockId());
-            }
+            std::unique_ptr<Block> newNext = level->generateBlock(board->getNextBlockId());
             board->setNextBlock(std::move(newNext));
         }
     }
@@ -464,8 +444,8 @@ public:
             auto effect = new HeavyEffect();
             opponent->addEffect(effect);
         } else if (action == "force") {
-            auto effect = new ForceEffect(blockType);
-            opponent->addEffect(effect);
+            // Force effect replaces opponent's current block immediately
+            opponent->replaceCurrentBlock(blockType);
         }
     }
 
