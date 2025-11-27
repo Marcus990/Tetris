@@ -51,8 +51,10 @@ public:
         for (int row = 0; row < TOTAL_ROWS; ++row) {
             for (int col = 0; col < BOARD_WIDTH; ++col) {
                 // Apply blind effect if active (only on visible rows)
-                if (blindMode && row >= RESERVE_ROWS &&
-                    row >= BLIND_ROW_START && row <= BLIND_ROW_END &&
+                // Blind boundaries are 0-indexed from visible area, so add RESERVE_ROWS offset
+                if (blindMode &&
+                    row >= RESERVE_ROWS + BLIND_ROW_START &&
+                    row <= RESERVE_ROWS + BLIND_ROW_END &&
                     col >= BLIND_COL_START && col <= BLIND_COL_END) {
                     out << '?';
                 } else if (display[row][col].isFilled()) {

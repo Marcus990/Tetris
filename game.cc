@@ -126,12 +126,32 @@ public:
 
         if (!board->getNextBlock()) {
             // First block - create it
-            auto block = level->generateBlock(board->getNextBlockId());
+            char forcedType = board->getForcedBlockType();
+            std::unique_ptr<Block> block;
+
+            if (forcedType != '\0') {
+                // Create the forced block type
+                block = level->createBlockFromType(forcedType, board->getNextBlockId());
+                board->clearForcedBlockType();  // Consume the force effect
+            } else {
+                block = level->generateBlock(board->getNextBlockId());
+            }
             board->setNextBlock(std::move(block));
         } else {
             // Move next to current, generate new next
             board->setCurrentBlock(board->takeNextBlock());
-            auto newNext = level->generateBlock(board->getNextBlockId());
+
+            // Check for forced block type when generating next block
+            char forcedType = board->getForcedBlockType();
+            std::unique_ptr<Block> newNext;
+
+            if (forcedType != '\0') {
+                // Create the forced block type
+                newNext = level->createBlockFromType(forcedType, board->getNextBlockId());
+                board->clearForcedBlockType();  // Consume the force effect
+            } else {
+                newNext = level->generateBlock(board->getNextBlockId());
+            }
             board->setNextBlock(std::move(newNext));
         }
     }
@@ -154,6 +174,9 @@ public:
                 getCurrentLevel()->getLevelNumber(), linesCleared);
             score->addScore(points);
 
+            // Render board after clearing rows so player can see what happened
+            render();
+
             // Check for special action (2+ lines cleared)
             if (linesCleared >= ROWS_FOR_SPECIAL_ACTION) {
                 std::cout << "Special Action! Choose one: blind, heavy, force\n";
@@ -171,6 +194,16 @@ public:
                 } else {
                     applySpecialAction(action, '\0');
                 }
+
+                // Immediately sync displays after applying special action
+                bool isBlind1 = board1->hasBlindEffect();
+                bool isBlind2 = board2->hasBlindEffect();
+
+                textDisplay1->setBlindMode(isBlind1);
+                if (!textOnly) graphicsDisplay1->setBlindMode(isBlind1);
+
+                textDisplay2->setBlindMode(isBlind2);
+                if (!textOnly) graphicsDisplay2->setBlindMode(isBlind2);
             }
         }
 
@@ -194,6 +227,19 @@ public:
 
         // Check for block removals
         board->checkBlockRemoval();
+
+        // Update effects only on the current player's board (whose turn just finished)
+        // This ensures effects last for the correct number of opponent turns
+        board->updateEffects();
+
+        // Update blind mode displays for both players based on their board state
+        bool isBlind1 = board1->hasBlindEffect();
+        textDisplay1->setBlindMode(isBlind1);
+        if (!textOnly) graphicsDisplay1->setBlindMode(isBlind1);
+
+        bool isBlind2 = board2->hasBlindEffect();
+        textDisplay2->setBlindMode(isBlind2);
+        if (!textOnly) graphicsDisplay2->setBlindMode(isBlind2);
 
         // Check game over
         if (board->isGameOver()) {
@@ -257,12 +303,22 @@ public:
             }
         }
 
+        // Check blind mode for both boards
+        bool isBlind1 = board1->hasBlindEffect();
+        bool isBlind2 = board2->hasBlindEffect();
+
         // Print boards side by side (including reserve rows - all 18 rows)
         for (int row = 0; row < TOTAL_ROWS; ++row) {
             std::cout << "║";
             // Print board 1 row
             for (int col = 0; col < BOARD_WIDTH; ++col) {
-                if (display1[row][col].isFilled()) {
+                // Apply blind effect if active
+                if (isBlind1 &&
+                    row >= RESERVE_ROWS + BLIND_ROW_START &&
+                    row <= RESERVE_ROWS + BLIND_ROW_END &&
+                    col >= BLIND_COL_START && col <= BLIND_COL_END) {
+                    std::cout << '?';
+                } else if (display1[row][col].isFilled()) {
                     std::cout << display1[row][col].getType();
                 } else {
                     std::cout << ' ';
@@ -272,7 +328,13 @@ public:
 
             // Print board 2 row
             for (int col = 0; col < BOARD_WIDTH; ++col) {
-                if (display2[row][col].isFilled()) {
+                // Apply blind effect if active
+                if (isBlind2 &&
+                    row >= RESERVE_ROWS + BLIND_ROW_START &&
+                    row <= RESERVE_ROWS + BLIND_ROW_END &&
+                    col >= BLIND_COL_START && col <= BLIND_COL_END) {
+                    std::cout << '?';
+                } else if (display2[row][col].isFilled()) {
                     std::cout << display2[row][col].getType();
                 } else {
                     std::cout << ' ';
@@ -388,15 +450,7 @@ public:
         if (action == "blind") {
             auto effect = new BlindEffect(1);
             opponent->addEffect(effect);
-
-            // Set blind mode on opponent's displays
-            if (currentPlayer == PLAYER_ONE) {
-                textDisplay2->setBlindMode(true);
-                if (!textOnly) graphicsDisplay2->setBlindMode(true);
-            } else {
-                textDisplay1->setBlindMode(true);
-                if (!textOnly) graphicsDisplay1->setBlindMode(true);
-            }
+            // Blind mode will be synchronized automatically in drop()
         } else if (action == "heavy") {
             auto effect = new HeavyEffect();
             opponent->addEffect(effect);
