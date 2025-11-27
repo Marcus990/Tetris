@@ -27,8 +27,14 @@ export class Board {
     int nextBlockId;
     int blocksSinceLastClear;  // For Level 4 center block penalty
 
+    // Effect state (managed by effects via apply/unapply)
+    bool blindActive;
+    int heavyCount;  // Can stack multiple heavy effects
+    char forcedBlockType;
+
 public:
-    Board() : level(nullptr), score(nullptr), nextBlockId(0), blocksSinceLastClear(0) {
+    Board() : level(nullptr), score(nullptr), nextBlockId(0), blocksSinceLastClear(0),
+              blindActive(false), heavyCount(0), forcedBlockType('\0') {
         // Initialize grid (18 rows x 11 cols based on constants)
         grid.resize(TOTAL_ROWS, std::vector<Cell>(BOARD_WIDTH));
     }
@@ -306,8 +312,72 @@ public:
         return true;
     }
 
+    // Effect state management (called by effects in apply/unapply)
+    void setBlindActive(bool active) { blindActive = active; }
+    void incrementHeavy() { heavyCount++; }
+    void decrementHeavy() { if (heavyCount > 0) heavyCount--; }
+    void setForcedBlockType(char type) { forcedBlockType = type; }
+    void clearForcedBlockType() {
+        forcedBlockType = '\0';
+        // Mark all force effects as used so they expire
+        for (auto* effect : activeEffects) {
+            if (auto* forceEffect = dynamic_cast<ForceEffect*>(effect)) {
+                forceEffect->markUsed();
+            }
+        }
+    }
+
+    // Effect state queries
+    bool hasBlindEffect() const { return blindActive; }
+    bool hasHeavyEffect() const { return heavyCount > 0; }
+    char getForcedBlockType() const { return forcedBlockType; }
+
     void addEffect(Effect* effect) {
         activeEffects.push_back(effect);
+
+        // Apply effect immediately based on type
+        auto effectType = effect->getType();
+
+        if (effectType == Effect::Type::Blind) {
+            setBlindActive(true);
+        } else if (effectType == Effect::Type::Heavy) {
+            incrementHeavy();
+        } else if (effectType == Effect::Type::Force) {
+            if (auto* forceEffect = dynamic_cast<ForceEffect*>(effect)) {
+                setForcedBlockType(forceEffect->getBlockType());
+            }
+        }
+    }
+
+    // Update all effects and remove expired ones
+    void updateEffects() {
+        for (auto* effect : activeEffects) {
+            effect->update();
+        }
+
+        // Remove expired effects
+        auto it = activeEffects.begin();
+        while (it != activeEffects.end()) {
+            if ((*it)->isExpired()) {
+                // Unapply effect before deletion
+                switch ((*it)->getType()) {
+                    case Effect::Type::Blind:
+                        setBlindActive(false);
+                        break;
+                    case Effect::Type::Heavy:
+                        decrementHeavy();
+                        break;
+                    case Effect::Type::Force:
+                        clearForcedBlockType();
+                        break;
+                }
+
+                delete *it;
+                it = activeEffects.erase(it);
+            } else {
+                ++it;
+            }
+        }
     }
 
     int getNextBlockId() { return nextBlockId++; }

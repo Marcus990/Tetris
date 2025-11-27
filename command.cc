@@ -30,9 +30,9 @@ public:
         Board* board = game->getCurrentBoard();
         board->moveLeft();
 
-        // Apply heavy effect if active
+        // Apply heavy effect if active (from level or special action)
         Level* level = game->getCurrentLevel();
-        if (level->isHeavy()) {
+        if (level->isHeavy() || board->hasHeavyEffect()) {
             board->moveDown();
         }
     }
@@ -44,9 +44,9 @@ public:
         Board* board = game->getCurrentBoard();
         board->moveRight();
 
-        // Apply heavy effect if active
+        // Apply heavy effect if active (from level or special action)
         Level* level = game->getCurrentLevel();
-        if (level->isHeavy()) {
+        if (level->isHeavy() || board->hasHeavyEffect()) {
             board->moveDown();
         }
     }
@@ -74,9 +74,9 @@ public:
         Board* board = game->getCurrentBoard();
         board->rotate(true);
 
-        // Apply heavy effect if active
+        // Apply heavy effect if active (from level or special action)
         Level* level = game->getCurrentLevel();
-        if (level->isHeavy()) {
+        if (level->isHeavy() || board->hasHeavyEffect()) {
             board->moveDown();
         }
     }
@@ -88,9 +88,9 @@ public:
         Board* board = game->getCurrentBoard();
         board->rotate(false);
 
-        // Apply heavy effect if active
+        // Apply heavy effect if active (from level or special action)
         Level* level = game->getCurrentLevel();
-        if (level->isHeavy()) {
+        if (level->isHeavy() || board->hasHeavyEffect()) {
             board->moveDown();
         }
     }
