@@ -322,15 +322,24 @@ void CommandInterpreter::executeCommand(const std::string& input) {
     }
 
     // Execute command (respecting multiplier if allowed)
+    bool gameWasRestarted = false;
     if (cmd->canMultiply()) {
         for (int j = 0; j < multiplier; ++j) {
             cmd->execute(game);
+            // Stop executing if game restarted due to game over
+            if (game->shouldStopExecutingCommands()) {
+                gameWasRestarted = true;
+                break;
+            }
         }
+        // Clear the stop flag after processing
+        game->clearStopExecutionFlag();
     } else {
         cmd->execute(game);
     }
-    // Note: Drop command switches players 
-    if (fullCommand == "drop") {
+
+    // Note: Drop command switches players (unless game was restarted)
+    if (fullCommand == "drop" && !gameWasRestarted) {
         game->switchPlayer();
     }
 

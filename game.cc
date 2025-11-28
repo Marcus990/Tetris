@@ -27,6 +27,7 @@ export class Game {
     int currentPlayer;
     bool isRunning;
     bool textOnly;
+    bool shouldStopExecution;
     unsigned int randomSeed;
     std::string scriptFile1;
     std::string scriptFile2;
@@ -53,4 +54,6 @@ public:
     void levelUp();
     void levelDown();
     void createPlayerLevel(int player, int levelNum);
+    bool shouldStopExecutingCommands() const;
+    void clearStopExecutionFlag();
 };
