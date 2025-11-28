@@ -7,7 +7,7 @@ EXEC = biquadris
 
 SOURCES = constants.cc cell.cc block.cc blocks.cc observer.cc scorekeeper.cc \
           level.cc effect.cc board.cc window.cc window-impl.cc textdisplay.cc \
-          graphicsdisplay.cc game.cc command.cc main.cc
+          graphicsdisplay.cc graphicsdisplay-impl.cc game.cc command.cc main.cc
 
 OBJECTS = $(SOURCES:.cc=.o)
 
