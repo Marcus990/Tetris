@@ -41,118 +41,64 @@ void Block::setPosition(int x, int y)
     posY = y;
 }
 
-// Helper for 90-degree clockwise rotation
-// Lower-right of rotated block goes to lower-left of original
-void Block::rotateCellsClockwise()
-{
-    // Find bounding box
+void Block::rotateCellsClockwise() {
     int minRow = cells[0].first, maxRow = cells[0].first;
     int minCol = cells[0].second, maxCol = cells[0].second;
-    for (const auto &cell : cells)
-    {
+    for (auto &cell : cells) {
         minRow = std::min(minRow, cell.first);
         maxRow = std::max(maxRow, cell.first);
         minCol = std::min(minCol, cell.second);
         maxCol = std::max(maxCol, cell.second);
     }
-    int height = maxRow - minRow;
+    
+    int width  = maxCol - minCol + 1;
+    int height = maxRow - minRow + 1; // not used here, but fine to keep
 
-    // Rotate: (row, col) -> (col, height - row)
-    for (auto &cell : cells)
-    {
-        int oldRow = cell.first - minRow;
-        int oldCol = cell.second - minCol;
-        cell.first = oldCol;
-        cell.second = height - oldRow;
-    }
+    for (auto &cell : cells) {
+        int row = cell.first;
+        int col = cell.second;
 
-    // Find new bounding box
-    int newMinRow = cells[0].first, newMaxRow = cells[0].first;
-    int newMinCol = cells[0].second, newMaxCol = cells[0].second;
-    for (const auto &cell : cells)
-    {
-        newMinRow = std::min(newMinRow, cell.first);
-        newMaxRow = std::max(newMaxRow, cell.first);
-        newMinCol = std::min(newMinCol, cell.second);
-        newMaxCol = std::max(newMaxCol, cell.second);
-    }
+        int x = col - minCol;      // right
+        int y = maxRow - row;      // up
 
-    // Shift so lower-left is preserved (normalize to minRow=0, and shift right edge to col 0)
-    int newWidth = newMaxCol - newMinCol;
-    for (auto &cell : cells)
-    {
-        cell.first -= newMinRow;
-        cell.second -= (newMinCol + newWidth); // Shift so right edge is at col 0
-    }
+        // CLOCKWISE: (x, y) -> (y, width - 1 - x)
+        int xp = y;
+        int yp = width - 1 - x;
 
-    // Now shift to make all coords non-negative starting from 0
-    newMinCol = cells[0].second;
-    for (const auto &cell : cells)
-    {
-        newMinCol = std::min(newMinCol, cell.second);
-    }
-    for (auto &cell : cells)
-    {
-        cell.second -= newMinCol;
+        cell.second = minCol + xp; // new col
+        cell.first  = maxRow - yp; // new row
     }
 
     rotationState = (rotationState + 1) % 4;
 }
 
-// Helper for 90-degree counter-clockwise rotation
-// Top-left of rotated block goes to lower-left of original
-void Block::rotateCellsCounterClockwise()
-{
-    // Find bounding box
+void Block::rotateCellsCounterClockwise() {
     int minRow = cells[0].first, maxRow = cells[0].first;
     int minCol = cells[0].second, maxCol = cells[0].second;
-    for (const auto &cell : cells)
-    {
+    for (auto &cell : cells) {
         minRow = std::min(minRow, cell.first);
         maxRow = std::max(maxRow, cell.first);
         minCol = std::min(minCol, cell.second);
         maxCol = std::max(maxCol, cell.second);
     }
-    int width = maxCol - minCol;
 
-    // Rotate: (row, col) -> (width - col, row)
-    for (auto &cell : cells)
-    {
-        int oldRow = cell.first - minRow;
-        int oldCol = cell.second - minCol;
-        cell.first = width - oldCol;
-        cell.second = oldRow;
+    int width  = maxCol - minCol + 1;
+    int height = maxRow - minRow + 1;
+
+    for (auto &cell : cells) {
+        int row = cell.first;
+        int col = cell.second;
+
+        int x = col - minCol;
+        int y = maxRow - row;
+
+        // COUNTER-CLOCKWISE: (x, y) -> (height - 1 - y, x)
+        int xp = height - 1 - y;
+        int yp = x;
+
+        cell.second = minCol + xp;
+        cell.first  = maxRow - yp;
     }
 
-    // Find new bounding box
-    int newMinRow = cells[0].first, newMaxRow = cells[0].first;
-    int newMinCol = cells[0].second, newMaxCol = cells[0].second;
-    for (const auto &cell : cells)
-    {
-        newMinRow = std::min(newMinRow, cell.first);
-        newMaxRow = std::max(newMaxRow, cell.first);
-        newMinCol = std::min(newMinCol, cell.second);
-        newMaxCol = std::max(newMaxCol, cell.second);
-    }
-
-    // Shift so lower-left is preserved (top of rotated goes to bottom)
-    int newHeight = newMaxRow - newMinRow;
-    for (auto &cell : cells)
-    {
-        cell.first -= (newMinRow + newHeight); // Shift so top edge is at row 0
-        cell.second -= newMinCol;
-    }
-
-    // Now shift to make all coords non-negative starting from 0
-    newMinRow = cells[0].first;
-    for (const auto &cell : cells)
-    {
-        newMinRow = std::min(newMinRow, cell.first);
-    }
-    for (auto &cell : cells)
-    {
-        cell.first -= newMinRow;
-    }
-
-    rotationState = (rotationState + 3) % 4;
+    rotationState = (rotationState + 3) % 4; // -1 mod 4
 }

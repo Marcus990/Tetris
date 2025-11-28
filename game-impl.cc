@@ -354,8 +354,8 @@ void Game::render() {
         }
     };
 
-    // Print boards side by side (skip reserve rows, show only visible 15 rows)
-    for (int row = RESERVE_ROWS; row < TOTAL_ROWS; ++row) {
+    // Print boards side by side (include all rows including 3 reserve rows at top)
+    for (int row = 0; row < TOTAL_ROWS; ++row) {
         std::cout << BOLD << CYAN << "║ " << RESET;
 
         // Print board 1 row
