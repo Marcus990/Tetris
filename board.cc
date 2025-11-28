@@ -286,12 +286,10 @@ public:
     }
 
     bool isGameOver() const {
-        // Game over if blocks exist in top 3 reserve rows after lock
-        for (int row = 0; row < RESERVE_ROWS; ++row) {
-            for (int col = 0; col < BOARD_WIDTH; ++col) {
-                if (grid[row][col].isFilled()) {
-                    return true;
-                }
+        
+        for (const auto& [posX, posY] : nextBlock->getAbsoluteCells()) {
+            if (grid[posX][posY].isFilled()) {
+                return true;
             }
         }
         return false;

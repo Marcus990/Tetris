@@ -559,6 +559,19 @@ public:
         // Command prompt
         std::cout << "\n"
                   << BOLD << WHITE << "Enter command: > " << RESET;
+
+        if (!textOnly) {
+            graphicsDisplay1->renderWithInfo(
+                level1->getLevelNumber(),
+                score1->getCurrentScore(),
+                score1->getHighScore()
+            );
+            graphicsDisplay2->renderWithInfo(
+                level2->getLevelNumber(),
+                score2->getCurrentScore(),
+                score2->getHighScore()
+            );
+        }
     }
 
     void restart()
