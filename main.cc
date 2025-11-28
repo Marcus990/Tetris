@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include <chrono>
 import game;
 import command;
 
@@ -9,7 +10,7 @@ using namespace std;
 int main(int argc, char* argv[]) {
     // Default settings
     bool textOnly = false;
-    unsigned int seed = 0;
+    unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
     string scriptFile1 = "sequence1.txt";
     string scriptFile2 = "sequence2.txt";
     int startLevel = 0;
