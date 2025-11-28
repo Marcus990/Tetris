@@ -1,10 +1,8 @@
-module;
-#include <vector>
-#include <utility>
 export module block;
+import <vector>;
+import <utility>;
 
-export class Block
-{
+export class Block {
 protected:
     std::vector<std::pair<int, int>> cells; // Relative positions (row, col)
     int posX;                               // Current X position (column)

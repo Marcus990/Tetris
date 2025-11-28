@@ -1,9 +1,8 @@
-module;
-#include <memory>
-#include <string>
-#include <vector>
-#include <iostream>
 module game;
+import <memory>;
+import <string>;
+import <vector>;
+import <iostream>;
 import board;
 import block;
 import level;
@@ -218,8 +217,8 @@ bool Game::drop() {
     // Spawn next block
     spawnNextBlock(board);
 
-    // Switch to other player after drop
-    switchPlayer();
+    // Beep sound
+    std::cout << '\a';
 
     return true;
 }
@@ -456,16 +455,21 @@ void Game::render() {
     std::cout << "\n" << BOLD << WHITE << "Enter command: > " << RESET;
 
     if (!textOnly) {
-        graphicsDisplay1->renderWithInfo(
+        // Set game info on graphics displays before notifying
+        graphicsDisplay1->setGameInfo(
             level1->getLevelNumber(),
             score1->getCurrentScore(),
             score1->getHighScore()
         );
-        graphicsDisplay2->renderWithInfo(
+        graphicsDisplay2->setGameInfo(
             level2->getLevelNumber(),
             score2->getCurrentScore(),
             score2->getHighScore()
         );
+
+        // Notify observers to trigger rendering
+        board1->notifyObservers();
+        board2->notifyObservers();
     }
 }
 

@@ -1,8 +1,7 @@
-module;
-#include <vector>
-#include <map>
-#include <memory>
 export module board;
+import <vector>;
+import <map>;
+import <memory>;
 import cell;
 import block;
 import constants;

@@ -1,7 +1,6 @@
-module;
-#include <vector>
-#include <utility>
 module blocks;
+import <vector>;
+import <utility>;
 import block;
 import constants;
 
@@ -29,15 +28,14 @@ void IBlock::rotateCounterClockwise()
 
 // J-block:
 // #
-// #
-// ##
+// ###
 JBlock::JBlock(int level, int id, int startX, int startY)
     : Block('J', level, id, startX, startY)
 {
     cells.push_back({0, 0});
     cells.push_back({1, 0});
-    cells.push_back({2, 0});
-    cells.push_back({2, 1});
+    cells.push_back({1, 1});
+    cells.push_back({1, 2});
 }
 
 void JBlock::rotateClockwise()
@@ -52,15 +50,14 @@ void JBlock::rotateCounterClockwise()
 
 // L-block:
 //   #
-//   #
-//  ##
+// ###
 LBlock::LBlock(int level, int id, int startX, int startY)
     : Block('L', level, id, startX, startY)
 {
-    cells.push_back({0, 1});
+    cells.push_back({1, 0});
     cells.push_back({1, 1});
-    cells.push_back({2, 1});
-    cells.push_back({2, 0});
+    cells.push_back({0, 2});
+    cells.push_back({1, 2});
 }
 
 void LBlock::rotateClockwise()
@@ -140,9 +137,9 @@ TBlock::TBlock(int level, int id, int startX, int startY)
     : Block('T', level, id, startX, startY)
 {
     cells.push_back({0, 1});
-    cells.push_back({1, 0});
+    cells.push_back({0, 0});
     cells.push_back({1, 1});
-    cells.push_back({1, 2});
+    cells.push_back({0, 2});
 }
 
 void TBlock::rotateClockwise()

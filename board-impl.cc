@@ -1,9 +1,8 @@
-module;
-#include <vector>
-#include <map>
-#include <memory>
-#include <algorithm>
 module board;
+import <vector>;
+import <map>;
+import <memory>;
+import <algorithm>;
 import cell;
 import block;
 import blocks;

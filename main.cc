@@ -1,6 +1,6 @@
-#include <iostream>
-#include <string>
-#include <cstdlib>
+import <iostream>;
+import <string>;
+import <cstdlib>;
 import game;
 import command;
 

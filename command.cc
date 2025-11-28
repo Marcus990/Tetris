@@ -1,9 +1,8 @@
-module;
-#include <string>
-#include <map>
-#include <vector>
-#include <memory>
 export module command;
+import <string>;
+import <map>;
+import <vector>;
+import <memory>;
 import game;
 
 // Abstract Command class

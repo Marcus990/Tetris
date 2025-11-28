@@ -1,8 +1,7 @@
-module;
-#include <memory>
-#include <string>
-#include <algorithm>
 module graphicsdisplay;
+import <memory>;
+import <string>;
+import <algorithm>;
 import observer;
 import board;
 import block;
@@ -54,8 +53,9 @@ void GraphicsDisplay::drawEmptyCell(int row, int col) {
 
 GraphicsDisplay::GraphicsDisplay(Board* b, std::string name, int width, int height)
     : board(b), window(std::make_unique<Xwindow>(width, height)),
-      blockSize(GRAPHICS_BLOCK_SIZE), blindMode(false), playerName(name) {
-    
+      blockSize(GRAPHICS_BLOCK_SIZE), blindMode(false), playerName(name),
+      cachedLevel(0), cachedScore(0), cachedHighScore(0) {
+
     int boardWidth = BOARD_WIDTH * blockSize;
     offsetX = (width - boardWidth) / 2;
     headerHeight = HEADER_HEIGHT;
@@ -64,7 +64,13 @@ GraphicsDisplay::GraphicsDisplay(Board* b, std::string name, int width, int heig
 }
 
 void GraphicsDisplay::update() {
-    render();
+    renderWithInfo(cachedLevel, cachedScore, cachedHighScore);
+}
+
+void GraphicsDisplay::setGameInfo(int level, int score, int highScore) {
+    cachedLevel = level;
+    cachedScore = score;
+    cachedHighScore = highScore;
 }
 
 void GraphicsDisplay::setBlindMode(bool blind) {

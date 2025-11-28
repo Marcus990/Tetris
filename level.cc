@@ -1,9 +1,8 @@
-module;
-#include <memory>
-#include <random>
-#include <string>
-#include <vector>
 export module level;
+import <memory>;
+import <random>;
+import <string>;
+import <vector>;
 import block;
 import constants;
 
@@ -75,7 +74,7 @@ public:
     bool isHeavy() const override;
 };
 
-// Level 4: Like Level 3, plus center block every 5 blocks without clearing
+// Level 4: Like Level 3, plus center block every 5 drops without clearing
 export class Level4 : public Level {
     std::mt19937 rng;
     std::uniform_int_distribution<int> dist;
