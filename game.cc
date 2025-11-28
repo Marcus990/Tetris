@@ -34,8 +34,8 @@ export class Game {
 
 public:
     Game(unsigned int seed = 0, int level = 0,
-         const std::string& script1 = "sequence1.txt",
-         const std::string& script2 = "sequence2.txt",
+         const std::string& script1 = "biquadris_sequence1.txt",
+         const std::string& script2 = "biquadris_sequence2.txt",
          bool textMode = false);
 
     void createLevels(int levelNum);

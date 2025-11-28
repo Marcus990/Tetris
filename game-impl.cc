@@ -200,25 +200,27 @@ bool Game::drop() {
     // Update blind mode displays for both players based on their board state
     bool isBlind1 = board1->hasBlindEffect();
     textDisplay1->setBlindMode(isBlind1);
+    
     if (!textOnly)
         graphicsDisplay1->setBlindMode(isBlind1);
 
     bool isBlind2 = board2->hasBlindEffect();
     textDisplay2->setBlindMode(isBlind2);
+
     if (!textOnly)
         graphicsDisplay2->setBlindMode(isBlind2);
 
+    // Beep sound
+    std::cout << '\a';
+    
     // Check game over
     if (board->isGameOver()) {
-        isRunning = false;
-        return false;
+        restart();
+        return true;
     }
 
     // Spawn next block
     spawnNextBlock(board);
-
-    // Beep sound
-    std::cout << '\a';
 
     return true;
 }
