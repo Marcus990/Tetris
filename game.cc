@@ -268,7 +268,6 @@ public:
         spawnNextBlock(board);
 
         // Switch to other player after drop
-        switchPlayer();
 
         return true;
     }
