@@ -140,17 +140,38 @@ bool Game::drop() {
 
         // Check for special action (2+ lines cleared)
         if (linesCleared >= ROWS_FOR_SPECIAL_ACTION) {
-            std::cout << "Special Action! Choose one: blind, heavy, force\n";
             std::string action;
-            std::cin >> action;
+            bool validAction = false;
+
+            while (!validAction) {
+                std::cout << "Special Action! Choose one: blind, heavy, force\n";
+                std::cin >> action;
+
+                if (action == "blind" || action == "heavy" || action == "force") {
+                    validAction = true;
+                } else {
+                    std::cout << "Invalid action. Please choose: blind, heavy, or force\n";
+                }
+            }
 
             // If force, ask for block type
             if (action == "force") {
-                std::cout << "Choose block type (I, J, L, O, S, Z, T): ";
                 std::string blockType;
-                std::cin >> blockType;
-                if (!blockType.empty()) {
-                    applySpecialAction(action, blockType[0]);
+                bool validBlock = false;
+
+                while (!validBlock) {
+                    std::cout << "Choose block type (I, J, L, O, S, Z, T): ";
+                    std::cin >> blockType;
+
+                    if (!blockType.empty() &&
+                        (blockType[0] == 'I' || blockType[0] == 'J' || blockType[0] == 'L' ||
+                         blockType[0] == 'O' || blockType[0] == 'S' || blockType[0] == 'Z' ||
+                         blockType[0] == 'T')) {
+                        validBlock = true;
+                        applySpecialAction(action, blockType[0]);
+                    } else {
+                        std::cout << "Invalid block type. Please choose: I, J, L, O, S, Z, or T\n";
+                    }
                 }
             }
             else {
