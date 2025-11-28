@@ -7,9 +7,11 @@ export class ScoreKeeper {
 public:
     ScoreKeeper() : currentScore(0), highScore(0) {}
 
+    // Getter methods
     int getCurrentScore() const { return currentScore; }
     int getHighScore() const { return highScore; }
 
+    // Add points to current score and update high score if needed
     void addScore(int points) {
         currentScore += points;
         if (currentScore > highScore) {
@@ -29,8 +31,8 @@ public:
         return points * points;
     }
 
+    // Reset current score (high score remains)
     void reset() {
         currentScore = 0;
-        // High score persists
     }
 };
