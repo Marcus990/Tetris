@@ -166,6 +166,38 @@ void Board::drop() {
     lockBlock();
 }
 
+std::vector<std::pair<int, int>> Board::getGhostPosition() const {
+    if (!currentBlock) {
+        return std::vector<std::pair<int, int>>();
+    }
+
+    // Save current block's position
+    int originalX = currentBlock->getX();
+    int originalY = currentBlock->getY();
+
+    // Find the ghost position by moving down until collision
+    int ghostY = originalY;
+    while (true) {
+        // Try next position down
+        const_cast<Block*>(currentBlock.get())->setPosition(originalX, ghostY + 1);
+
+        if (!isValidPosition(currentBlock.get())) {
+            // Collision detected - restore to last valid position
+            const_cast<Block*>(currentBlock.get())->setPosition(originalX, ghostY);
+            break;
+        }
+        ghostY++;
+    }
+
+    // Get ghost position cells
+    auto ghostCells = currentBlock->getAbsoluteCells();
+
+    // Restore original position
+    const_cast<Block*>(currentBlock.get())->setPosition(originalX, originalY);
+
+    return ghostCells;
+}
+
 void Board::dropCenterBlock(std::unique_ptr<Block> block) {
     if (!block) return;
 

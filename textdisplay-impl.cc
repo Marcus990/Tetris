@@ -31,7 +31,20 @@ void TextDisplay::render() {
     // Create a copy of the grid to overlay current block
     auto display = grid;
 
-    // Overlay current block if it exists
+    // Overlay ghost piece first (use '~' as marker)
+    if (current) {
+        auto ghostCells = board->getGhostPosition();
+        for (const auto& cell : ghostCells) {
+            int row = cell.first;
+            int col = cell.second;
+            if (row >= 0 && row < TOTAL_ROWS && col >= 0 && col < BOARD_WIDTH) {
+                display[row][col].setType('~');
+                display[row][col].setFilled(true);
+            }
+        }
+    }
+
+    // Overlay current block (overwrites ghost if at same position)
     if (current) {
         auto cells = current->getAbsoluteCells();
         for (const auto& cell : cells) {
@@ -55,7 +68,12 @@ void TextDisplay::render() {
                 col >= BLIND_COL_START && col <= BLIND_COL_END) {
                 out << '?';
             } else if (display[row][col].isFilled()) {
-                out << display[row][col].getType();
+                char cellType = display[row][col].getType();
+                if (cellType == '~') {
+                    out << "☐";  // Empty box for ghost piece
+                } else {
+                    out << cellType;
+                }
             } else {
                 out << ' ';
             }

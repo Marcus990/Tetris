@@ -68,6 +68,9 @@ public:
     // Drop block until it can't move down
     void drop();
 
+    // Calculate ghost piece position (where block would land if dropped)
+    std::vector<std::pair<int, int>> getGhostPosition() const;
+
     // Drop a 1x1 center block from Level 4
     void dropCenterBlock(std::unique_ptr<Block> block);
 

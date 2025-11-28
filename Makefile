@@ -13,7 +13,7 @@ SOURCES = constants.cc cell.cc block.cc block-impl.cc blocks.cc blocks-impl.cc \
 
 OBJECTS = $(SOURCES:.cc=.o)
 
-HEADERS = vector utility map memory algorithm iostream cstdlib fstream random cctype string
+HEADERS = chrono vector utility map memory algorithm iostream cstdlib fstream random cctype string
 
 $(EXEC): precompiled-headers $(OBJECTS)
 	$(CXX) $(OBJECTS) -o $(EXEC) $(LDFLAGS)
