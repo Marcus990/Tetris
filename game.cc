@@ -67,8 +67,8 @@ public:
         board2->attach(textDisplay2.get());
 
         if (!textOnly) {
-            graphicsDisplay1 = std::make_unique<GraphicsDisplay>(board1.get());
-            graphicsDisplay2 = std::make_unique<GraphicsDisplay>(board2.get());
+            graphicsDisplay1 = std::make_unique<GraphicsDisplay>(board1.get(), "Player 1");
+            graphicsDisplay2 = std::make_unique<GraphicsDisplay>(board2.get(), "Player 2");
 
             board1->attach(graphicsDisplay1.get());
             board2->attach(graphicsDisplay2.get());

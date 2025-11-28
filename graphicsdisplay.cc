@@ -17,9 +17,10 @@ export class GraphicsDisplay : public IObserver {
     int blockSize;
     int offsetX;
     int offsetY;
+    int headerHeight;
     bool blindMode;
+    std::string playerName;
 
-    // Map block types to colors
     int getColor(char type) const {
         switch (type) {
             case 'I': return Xwindow::Cyan;
@@ -29,45 +30,46 @@ export class GraphicsDisplay : public IObserver {
             case 'S': return Xwindow::Green;
             case 'Z': return Xwindow::Red;
             case 'T': return Xwindow::Magenta;
-            case '*': return Xwindow::Brown;  // Level 4 center block
+            case '*': return Xwindow::Brown;
             default: return Xwindow::White;
         }
     }
 
-    // Draw a 3D beveled block with shading
     void draw3DBlock(int row, int col, int color) {
         int x = offsetX + col * blockSize;
         int y = offsetY + row * blockSize;
 
-        // Main block color
-        window->fillRectangle(x + 2, y + 2, blockSize - 4, blockSize - 4, color);
-
-        // Light top-left edges (highlight)
-        window->fillRectangle(x, y, blockSize, 2, Xwindow::White);           // Top
-        window->fillRectangle(x, y, 2, blockSize, Xwindow::White);           // Left
-
-        // Dark bottom-right edges (shadow)
-        window->fillRectangle(x, y + blockSize - 2, blockSize, 2, Xwindow::Black);     // Bottom
-        window->fillRectangle(x + blockSize - 2, y, 2, blockSize, Xwindow::Black);     // Right
+        window->fillRectangle(x + BLOCK_3D_INSET, y + BLOCK_3D_INSET, 
+                            blockSize - BLOCK_3D_INSET * 2, blockSize - BLOCK_3D_INSET * 2, color);
+        window->fillRectangle(x, y, blockSize, BLOCK_3D_INSET, Xwindow::White);
+        window->fillRectangle(x, y, BLOCK_3D_INSET, blockSize, Xwindow::White);
+        window->fillRectangle(x, y + blockSize - BLOCK_3D_SHADOW, blockSize, BLOCK_3D_SHADOW, Xwindow::Black);
+        window->fillRectangle(x + blockSize - BLOCK_3D_SHADOW, y, BLOCK_3D_SHADOW, blockSize, Xwindow::Black);
     }
 
-    // Draw empty cell with grid
     void drawEmptyCell(int row, int col) {
         int x = offsetX + col * blockSize;
         int y = offsetY + row * blockSize;
 
-        // Light gray background for empty cells
-        window->fillRectangle(x + 1, y + 1, blockSize - 2, blockSize - 2, Xwindow::White);
-
-        // Grid border
-        window->fillRectangle(x, y, blockSize, 1, Xwindow::Black);           // Top
-        window->fillRectangle(x, y, 1, blockSize, Xwindow::Black);           // Left
+        window->fillRectangle(x + EMPTY_CELL_INSET, y + EMPTY_CELL_INSET, 
+                            blockSize - EMPTY_CELL_INSET * 2, blockSize - EMPTY_CELL_INSET * 2, Xwindow::Black);
+        window->fillRectangle(x, y, blockSize, GRID_LINE_THICKNESS, Xwindow::White);
+        window->fillRectangle(x, y, GRID_LINE_THICKNESS, blockSize, Xwindow::White);
+        window->fillRectangle(x, y + blockSize - GRID_LINE_THICKNESS, blockSize, GRID_LINE_THICKNESS, Xwindow::White);
+        window->fillRectangle(x + blockSize - GRID_LINE_THICKNESS, y, GRID_LINE_THICKNESS, blockSize, Xwindow::White);
     }
 
 public:
-    GraphicsDisplay(Board* b, int width = GRAPHICS_WINDOW_WIDTH, int height = GRAPHICS_WINDOW_HEIGHT)
+    GraphicsDisplay(Board* b, std::string name = "Player", int width = GRAPHICS_WINDOW_WIDTH, int height = GRAPHICS_WINDOW_HEIGHT)
         : board(b), window(std::make_unique<Xwindow>(width, height)),
-          blockSize(GRAPHICS_BLOCK_SIZE), offsetX(GRAPHICS_PADDING), offsetY(GRAPHICS_PADDING), blindMode(false) {}
+          blockSize(GRAPHICS_BLOCK_SIZE), blindMode(false), playerName(name) {
+        
+        int boardWidth = BOARD_WIDTH * blockSize;
+        offsetX = (width - boardWidth) / 2;
+        headerHeight = HEADER_HEIGHT;
+        offsetY = ARCADE_TOP_BEZEL + PLAYER_NAME_SPACING;
+        window->setWindowTitle(playerName);
+    }
 
     void update() override {
         render();
@@ -91,13 +93,52 @@ public:
         const auto& grid = board->getGrid();
         Block* current = board->getCurrentBlock();
 
-        // Clear window with light background
-        window->fillRectangle(0, 0, GRAPHICS_WINDOW_WIDTH, GRAPHICS_WINDOW_HEIGHT, Xwindow::White);
+        window->fillRectangle(0, 0, GRAPHICS_WINDOW_WIDTH, GRAPHICS_WINDOW_HEIGHT, Xwindow::Brown);
 
-        // Create a copy of the grid to overlay current block
+        std::string gameboyText = "Nintendo Game Boy";
+        int gameboyTextWidth = gameboyText.length() * CHAR_WIDTH_GAMEBOY;
+        int gameboyTextX = GRAPHICS_WINDOW_WIDTH - gameboyTextWidth - GAMEBOY_TEXT_MARGIN;
+        int gameboyTextY = GRAPHICS_WINDOW_HEIGHT - GAMEBOY_TEXT_MARGIN;
+        
+        for (size_t i = 0; i < gameboyText.length(); i++) {
+            std::string ch(1, gameboyText[i]);
+            int charX = gameboyTextX + i * CHAR_WIDTH_GAMEBOY;
+            window->drawStringBlackBold(charX, gameboyTextY, ch);
+            window->drawStringBlackBold(charX + GRID_LINE_THICKNESS, gameboyTextY, ch);
+        }
+
+        int screenX = offsetX - ARCADE_SCREEN_PADDING;
+        int screenY = ARCADE_TOP_BEZEL - ARCADE_SCREEN_PADDING;
+        int screenW = BOARD_WIDTH * blockSize + ARCADE_SCREEN_PADDING * 2;
+        int screenH = TOTAL_ROWS * blockSize + ARCADE_SCREEN_PADDING * 2 + PLAYER_NAME_SPACING;
+        
+        window->fillRectangle(screenX - ARCADE_BEZEL_THICKNESS, screenY - ARCADE_BEZEL_THICKNESS,
+                            screenW + ARCADE_BEZEL_THICKNESS * 2, ARCADE_BEZEL_THICKNESS, Xwindow::Orange);
+        window->fillRectangle(screenX - ARCADE_BEZEL_THICKNESS, screenY - ARCADE_BEZEL_THICKNESS,
+                            ARCADE_BEZEL_THICKNESS, screenH + ARCADE_BEZEL_THICKNESS * 2, Xwindow::Orange);
+        window->fillRectangle(screenX - ARCADE_BEZEL_THICKNESS, screenY + screenH,
+                            screenW + ARCADE_BEZEL_THICKNESS * 2, ARCADE_BEZEL_THICKNESS, Xwindow::Orange);
+        window->fillRectangle(screenX + screenW, screenY - ARCADE_BEZEL_THICKNESS,
+                            ARCADE_BEZEL_THICKNESS, screenH + ARCADE_BEZEL_THICKNESS * 2, Xwindow::Orange);
+        
+        window->fillRectangle(screenX - SCREEN_INNER_BEZEL, screenY - SCREEN_INNER_BEZEL, 
+                            screenW + SCREEN_INNER_BEZEL * 2, SCREEN_INNER_BEZEL, Xwindow::White);
+        window->fillRectangle(screenX - SCREEN_INNER_BEZEL, screenY - SCREEN_INNER_BEZEL, 
+                            SCREEN_INNER_BEZEL, screenH + SCREEN_INNER_BEZEL * 2, Xwindow::White);
+        window->fillRectangle(screenX - SCREEN_INNER_BEZEL, screenY + screenH, 
+                            screenW + SCREEN_INNER_BEZEL * 2, SCREEN_INNER_BEZEL, Xwindow::White);
+        window->fillRectangle(screenX + screenW, screenY - SCREEN_INNER_BEZEL, 
+                            SCREEN_INNER_BEZEL, screenH + SCREEN_INNER_BEZEL * 2, Xwindow::White);
+        
+        window->fillRectangle(screenX, screenY, screenW, screenH, Xwindow::Black);
+
+        int textWidth = playerName.length() * CHAR_WIDTH_STANDARD;
+        int nameX = (GRAPHICS_WINDOW_WIDTH - textWidth) / 2 + TEXT_BASELINE_OFFSET;
+        int nameY = screenY + PLAYER_NAME_Y_OFFSET;
+        window->drawString(nameX, nameY, playerName);
+
         auto display = grid;
 
-        // Overlay current block if it exists
         if (current) {
             auto cells = current->getAbsoluteCells();
             for (const auto& cell : cells) {
@@ -110,21 +151,8 @@ public:
             }
         }
 
-        // Draw board border (thick frame) - includes reserve rows
-        int boardX = offsetX - 3;
-        int boardY = offsetY - 3;
-        int boardW = BOARD_WIDTH * blockSize + 6;
-        int boardH = TOTAL_ROWS * blockSize + 6;  // All 18 rows
-        window->fillRectangle(boardX, boardY, boardW, 3, Xwindow::Black);                    // Top
-        window->fillRectangle(boardX, boardY, 3, boardH, Xwindow::Black);                    // Left
-        window->fillRectangle(boardX, boardY + boardH - 3, boardW, 3, Xwindow::Black);       // Bottom
-        window->fillRectangle(boardX + boardW - 3, boardY, 3, boardH, Xwindow::Black);       // Right
-
-        // Draw the entire board including reserve rows (all 18 rows)
         for (int row = 0; row < TOTAL_ROWS; ++row) {
             for (int col = 0; col < BOARD_WIDTH; ++col) {
-                // Apply blind effect if active (only on visible rows)
-                // Blind boundaries are 0-indexed from visible area, so add RESERVE_ROWS offset
                 if (blindMode &&
                     row >= RESERVE_ROWS + BLIND_ROW_START &&
                     row <= RESERVE_ROWS + BLIND_ROW_END &&
@@ -141,33 +169,44 @@ public:
     }
 
     void renderWithInfo(int level, int score, int highScore) {
-        // Clear and render board first (to buffer, not presented yet)
         render();
 
-        // Next block and info panel position
-        int nextX = offsetX + (BOARD_WIDTH + 2) * blockSize;
-        int nextY = offsetY;
-        int previewSize = blockSize * 4;
+        int boardHeight = TOTAL_ROWS * blockSize;
+        int bottomPanelY = ARCADE_TOP_BEZEL + boardHeight + ARCADE_SCREEN_PADDING * 2 + PLAYER_NAME_SPACING + SCREEN_TO_PANEL_GAP;
 
-        // Draw next block preview with border
+        int leftPanelX = ARCADE_SIDE_MARGIN;
+        int previewSize = blockSize * PREVIEW_GRID_SIZE;
+        int totalPanelHeight = PANEL_HEADER_HEIGHT + PANEL_PREVIEW_SECTION_HEIGHT;
+
+        window->fillRectangle(leftPanelX - PANEL_OUTER_BORDER, bottomPanelY - PANEL_OUTER_BORDER, 
+                            SIDE_PANEL_WIDTH + PANEL_OUTER_BORDER * 2, totalPanelHeight + PANEL_OUTER_BORDER * 2, Xwindow::Orange);
+        window->fillRectangle(leftPanelX - PANEL_MIDDLE_BORDER, bottomPanelY - PANEL_MIDDLE_BORDER, 
+                            SIDE_PANEL_WIDTH + PANEL_MIDDLE_BORDER * 2, totalPanelHeight + PANEL_MIDDLE_BORDER * 2, Xwindow::DarkCyan);
+        window->fillRectangle(leftPanelX - PANEL_BORDER_THICKNESS, bottomPanelY - PANEL_BORDER_THICKNESS,
+                            SIDE_PANEL_WIDTH + PANEL_BORDER_THICKNESS * 2, totalPanelHeight + PANEL_BORDER_THICKNESS * 2, Xwindow::Black);
+
+        window->fillRectangle(leftPanelX, bottomPanelY, SIDE_PANEL_WIDTH, PANEL_HEADER_HEIGHT, Xwindow::DarkCyan);
+        int nextTextX = leftPanelX + (SIDE_PANEL_WIDTH - NEXT_TEXT_WIDTH) / 2 + TEXT_BASELINE_OFFSET;
+        window->drawString(nextTextX, bottomPanelY + PANEL_HEADER_HEIGHT / 2 + TEXT_BASELINE_OFFSET, "NEXT");
+
+        int contentSectionY = bottomPanelY + PANEL_HEADER_HEIGHT;
+        window->fillRectangle(leftPanelX, contentSectionY, SIDE_PANEL_WIDTH, PANEL_BORDER_THICKNESS, Xwindow::White);
+        
         Block* next = board->getNextBlock();
         if (next) {
-            // Draw "Next:" label
-            window->drawString(nextX, nextY - 10, "NEXT:");
+            int previewX = leftPanelX + NEXT_PREVIEW_PADDING;
+            int previewY = contentSectionY + NEXT_PREVIEW_PADDING;
+            int previewHeight = previewSize - NEXT_PREVIEW_HEIGHT_REDUCTION;
 
-            int previewX = nextX;
-            int previewY = nextY + 10;
+            window->fillRectangle(previewX - PREVIEW_BOX_BORDER, previewY - PREVIEW_BOX_BORDER, 
+                                previewSize + PREVIEW_BOX_BORDER * 2, previewHeight + PREVIEW_BOX_BORDER * 2, Xwindow::White);
+            window->fillRectangle(previewX, previewY, previewSize, previewHeight, Xwindow::Black);
 
-            // Draw preview box border
-            window->fillRectangle(previewX - 2, previewY - 2, previewSize + 4, previewSize + 4, Xwindow::Black);
-            window->fillRectangle(previewX, previewY, previewSize, previewSize, Xwindow::White);
-
-            // Draw the next block centered in preview
             auto cells = next->getCells();
             int color = getColor(next->getType());
 
-            // Calculate centering offset
-            int minCol = 100, maxCol = -100, minRow = 100, maxRow = -100;
+            int minCol = PREVIEW_CENTERING_MAX, maxCol = PREVIEW_CENTERING_MIN;
+            int minRow = PREVIEW_CENTERING_MAX, maxRow = PREVIEW_CENTERING_MIN;
             for (const auto& cell : cells) {
                 minRow = std::min(minRow, cell.first);
                 maxRow = std::max(maxRow, cell.first);
@@ -176,33 +215,48 @@ public:
             }
             int blockWidth = maxCol - minCol + 1;
             int blockHeight = maxRow - minRow + 1;
-            int centerOffsetX = (4 - blockWidth) * (blockSize / 2) / 2;
-            int centerOffsetY = (4 - blockHeight) * (blockSize / 2) / 2;
+            int centerOffsetX = (PREVIEW_GRID_SIZE - blockWidth) * (blockSize / PREVIEW_BLOCK_SCALE) / PREVIEW_BLOCK_SCALE;
+            int centerOffsetY = (PREVIEW_GRID_SIZE - blockHeight) * (blockSize / PREVIEW_BLOCK_SCALE) / PREVIEW_BLOCK_SCALE;
 
             for (const auto& cell : cells) {
                 int relRow = cell.first - minRow;
                 int relCol = cell.second - minCol;
-                int x = previewX + centerOffsetX + relCol * (blockSize / 2);
-                int y = previewY + centerOffsetY + relRow * (blockSize / 2);
+                int x = previewX + centerOffsetX + relCol * (blockSize / PREVIEW_BLOCK_SCALE);
+                int y = previewY + centerOffsetY + relRow * (blockSize / PREVIEW_BLOCK_SCALE);
 
-                // Draw mini 3D block
-                window->fillRectangle(x + 1, y + 1, blockSize / 2 - 2, blockSize / 2 - 2, color);
-                window->fillRectangle(x, y, blockSize / 2, 1, Xwindow::White);
-                window->fillRectangle(x, y, 1, blockSize / 2, Xwindow::White);
-                window->fillRectangle(x, y + blockSize / 2 - 1, blockSize / 2, 1, Xwindow::Black);
-                window->fillRectangle(x + blockSize / 2 - 1, y, 1, blockSize / 2, Xwindow::Black);
+                window->fillRectangle(x + PREVIEW_BOX_BORDER, y + PREVIEW_BOX_BORDER, 
+                                    blockSize / PREVIEW_BLOCK_SCALE - PREVIEW_BOX_BORDER * 2, 
+                                    blockSize / PREVIEW_BLOCK_SCALE - PREVIEW_BOX_BORDER * 2, color);
+                window->fillRectangle(x, y, blockSize / PREVIEW_BLOCK_SCALE, PREVIEW_BOX_BORDER, Xwindow::White);
+                window->fillRectangle(x, y, PREVIEW_BOX_BORDER, blockSize / PREVIEW_BLOCK_SCALE, Xwindow::White);
+                window->fillRectangle(x, y + blockSize / PREVIEW_BLOCK_SCALE - PREVIEW_BOX_BORDER, 
+                                    blockSize / PREVIEW_BLOCK_SCALE, PREVIEW_BOX_BORDER, Xwindow::Black);
+                window->fillRectangle(x + blockSize / PREVIEW_BLOCK_SCALE - PREVIEW_BOX_BORDER, y, 
+                                    PREVIEW_BOX_BORDER, blockSize / PREVIEW_BLOCK_SCALE, Xwindow::Black);
             }
+            
+            int statsX = previewX + previewSize + NEXT_STATS_OFFSET;
+            int statsStartY = contentSectionY + NEXT_STATS_Y_START;
+            
+            window->drawString(statsX, statsStartY, "Level: " + std::to_string(level));
+            window->drawString(statsX, statsStartY + NEXT_STATS_LINE_SPACING, "Score: " + std::to_string(score));
+            window->drawString(statsX, statsStartY + NEXT_STATS_LINE_SPACING * 2, "Hi Score: " + std::to_string(highScore));
         }
 
-        // Draw info text below next block preview area
-        int infoTextX = nextX;
-        int infoTextY = nextY + 10 + previewSize + 30;  // Below preview box
+        window->fillRectangle(leftPanelX - PANEL_BORDER_THICKNESS, bottomPanelY - PANEL_BORDER_THICKNESS,
+                            CORNER_ACCENT_SIZE, PREVIEW_BOX_BORDER, Xwindow::Yellow);
+        window->fillRectangle(leftPanelX - PANEL_BORDER_THICKNESS, bottomPanelY - PANEL_BORDER_THICKNESS,
+                            PREVIEW_BOX_BORDER, CORNER_ACCENT_SIZE, Xwindow::Yellow);
 
-        window->drawString(infoTextX, infoTextY, "Level:    " + std::to_string(level));
-        window->drawString(infoTextX, infoTextY + 20, "Score:    " + std::to_string(score));
-        window->drawString(infoTextX, infoTextY + 40, "Hi Score: " + std::to_string(highScore));
+        int rightPanelX = GRAPHICS_WINDOW_WIDTH - ARCADE_SIDE_MARGIN - CONTROL_PANEL_WIDTH;
+        int arrowX = rightPanelX + (CONTROL_PANEL_WIDTH - (CONTROL_KEY_SIZE * 3 + CONTROL_KEY_GAP * 2)) / 2;
+        int arrowY = bottomPanelY + ARROW_Y_OFFSET;
+        window->drawArrowKeys(arrowX, arrowY, CONTROL_KEY_SIZE);
 
-        // Present the complete frame to screen
+        int logoX = LOGO_MARGIN;
+        int logoY = GRAPHICS_WINDOW_HEIGHT - LOGO_HEIGHT - LOGO_MARGIN;
+        window->drawLogo(logoX, logoY, LOGO_WIDTH, LOGO_HEIGHT);
+
         window->present();
     }
 };

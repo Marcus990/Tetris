@@ -9,27 +9,30 @@ export class Xwindow {
   Window w;
   int s;
   GC gc;
-  unsigned long colours[10];
-  Pixmap pixmap;  // Double buffer
+  unsigned long colours[12];
+  Pixmap pixmap;
   int window_width, window_height;
 
+  static constexpr const char* LOGO_TEXT = "BIQUADRIS";
+  static constexpr int LOGO_NUM_LETTERS = 9;
+
  public:
-  Xwindow(int width=500, int height=500);  // Constructor; displays the window.
-  ~Xwindow();                              // Destructor; destroys the window.
+  Xwindow(int width=500, int height=500);
+  ~Xwindow();
   Xwindow(const Xwindow&) = delete;
   Xwindow &operator=(const Xwindow&) = delete;
 
-  // Available colours.
-  enum {White=0, Black, Red, Green, Blue, Cyan, Yellow, Magenta, Orange, Brown};
+  enum {White=0, Black, Red, Green, Blue, Cyan, Yellow, Magenta, Orange, Brown, DarkGreen, DarkCyan};
+  
+  static constexpr int LOGO_COLORS[9] = {Red, Orange, Brown, DarkGreen, DarkCyan, Blue, Magenta, Magenta, Red};
 
-  // Draws a rectangle (to double buffer)
   void fillRectangle(int x, int y, int width, int height, int colour=Black);
-
-  // Draws a string (to double buffer)
   void drawString(int x, int y, std::string msg);
-
-  // Flips the double buffer to screen (call after all drawing)
+  void drawStringBlack(int x, int y, std::string msg);
+  void drawStringBlackBold(int x, int y, std::string msg);
   void present();
-
+  void setWindowTitle(std::string title);
+  void drawLogo(int x, int y, int width, int height);
+  void drawArrowKeys(int x, int y, int keySize);
 };
 
