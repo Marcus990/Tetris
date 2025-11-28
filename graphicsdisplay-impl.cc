@@ -152,18 +152,28 @@ void GraphicsDisplay::render() {
 
     for (int row = 0; row < TOTAL_ROWS; ++row) {
         for (int col = 0; col < BOARD_WIDTH; ++col) {
-            if (blindMode &&
-                row >= RESERVE_ROWS + BLIND_ROW_START &&
-                row <= RESERVE_ROWS + BLIND_ROW_END &&
-                col >= BLIND_COL_START && col <= BLIND_COL_END) {
-                draw3DBlock(row, col, Xwindow::Black);
-            } else if (display[row][col].isFilled()) {
+            if (display[row][col].isFilled()) {
                 int color = getColor(display[row][col].getType());
                 draw3DBlock(row, col, color);
             } else {
                 drawEmptyCell(row, col);
             }
         }
+    }
+
+    // Draw white box overlay for blind effect
+    if (blindMode) {
+        int blindStartRow = RESERVE_ROWS + BLIND_ROW_START;
+        int blindEndRow = RESERVE_ROWS + BLIND_ROW_END;
+        int blindStartCol = BLIND_COL_START;
+        int blindEndCol = BLIND_COL_END;
+        
+        int blindX = offsetX + blindStartCol * blockSize;
+        int blindY = offsetY + blindStartRow * blockSize;
+        int blindWidth = (blindEndCol - blindStartCol + 1) * blockSize;
+        int blindHeight = (blindEndRow - blindStartRow + 1) * blockSize;
+        
+        window->fillRectangle(blindX, blindY, blindWidth, blindHeight, Xwindow::White);
     }
 }
 
