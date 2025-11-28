@@ -53,10 +53,13 @@ export class GraphicsDisplay : public IObserver {
 
         window->fillRectangle(x + EMPTY_CELL_INSET, y + EMPTY_CELL_INSET, 
                             blockSize - EMPTY_CELL_INSET * 2, blockSize - EMPTY_CELL_INSET * 2, Xwindow::Black);
-        window->fillRectangle(x, y, blockSize, GRID_LINE_THICKNESS, Xwindow::White);
-        window->fillRectangle(x, y, GRID_LINE_THICKNESS, blockSize, Xwindow::White);
-        window->fillRectangle(x, y + blockSize - GRID_LINE_THICKNESS, blockSize, GRID_LINE_THICKNESS, Xwindow::White);
-        window->fillRectangle(x + blockSize - GRID_LINE_THICKNESS, y, GRID_LINE_THICKNESS, blockSize, Xwindow::White);
+        
+        if (row >= RESERVE_ROWS) {
+            window->fillRectangle(x, y, blockSize, GRID_LINE_THICKNESS, Xwindow::White);
+            window->fillRectangle(x, y, GRID_LINE_THICKNESS, blockSize, Xwindow::White);
+            window->fillRectangle(x, y + blockSize - GRID_LINE_THICKNESS, blockSize, GRID_LINE_THICKNESS, Xwindow::White);
+            window->fillRectangle(x + blockSize - GRID_LINE_THICKNESS, y, GRID_LINE_THICKNESS, blockSize, Xwindow::White);
+        }
     }
 
 public:
@@ -93,18 +96,25 @@ public:
         const auto& grid = board->getGrid();
         Block* current = board->getCurrentBlock();
 
-        window->fillRectangle(0, 0, GRAPHICS_WINDOW_WIDTH, GRAPHICS_WINDOW_HEIGHT, Xwindow::Brown);
+        window->drawTetrisBackground(GRAPHICS_WINDOW_WIDTH, GRAPHICS_WINDOW_HEIGHT);
 
-        std::string gameboyText = "Nintendo Game Boy";
+        std::string gameboyText = "Nintendo";
         int gameboyTextWidth = gameboyText.length() * CHAR_WIDTH_GAMEBOY;
-        int gameboyTextX = GRAPHICS_WINDOW_WIDTH - gameboyTextWidth - GAMEBOY_TEXT_MARGIN;
-        int gameboyTextY = GRAPHICS_WINDOW_HEIGHT - GAMEBOY_TEXT_MARGIN;
+        int pillWidth = gameboyTextWidth + NINTENDO_PILL_PADDING_X * 2;
+        int pillHeight = CHAR_WIDTH_GAMEBOY + NINTENDO_PILL_PADDING_Y * 2;
+        int pillX = GRAPHICS_WINDOW_WIDTH - pillWidth - GAMEBOY_TEXT_MARGIN;
+        int pillY = GRAPHICS_WINDOW_HEIGHT - pillHeight - GAMEBOY_TEXT_MARGIN;
+        
+        window->drawRoundedRectangle(pillX, pillY, pillWidth, pillHeight, NINTENDO_PILL_RADIUS, Xwindow::White);
+        
+        int gameboyTextX = pillX + (pillWidth - gameboyTextWidth) / 2 + NINTENDO_TEXT_X_OFFSET;
+        int gameboyTextY = pillY + NINTENDO_PILL_PADDING_Y + CHAR_WIDTH_GAMEBOY;
         
         for (size_t i = 0; i < gameboyText.length(); i++) {
             std::string ch(1, gameboyText[i]);
             int charX = gameboyTextX + i * CHAR_WIDTH_GAMEBOY;
             window->drawStringBlackBold(charX, gameboyTextY, ch);
-            window->drawStringBlackBold(charX + GRID_LINE_THICKNESS, gameboyTextY, ch);
+            window->drawStringBlackBold(charX + 1, gameboyTextY, ch);
         }
 
         int screenX = offsetX - ARCADE_SCREEN_PADDING;
