@@ -9,7 +9,7 @@ export class Xwindow {
   Window w;
   int s;
   GC gc;
-  unsigned long colours[12];
+  unsigned long colours[16];
   Pixmap pixmap;
   int window_width, window_height;
 
@@ -22,7 +22,7 @@ export class Xwindow {
   Xwindow(const Xwindow&) = delete;
   Xwindow &operator=(const Xwindow&) = delete;
 
-  enum {White=0, Black, Red, Green, Blue, Cyan, Yellow, Magenta, Orange, Brown, DarkGreen, DarkCyan};
+  enum {White=0, Black, Red, Green, Blue, Cyan, Yellow, Magenta, Orange, Brown, DarkGreen, DarkCyan, MidnightBlue, NavyBlue, RoyalBlue, MediumBlue};
   
   static constexpr int LOGO_COLORS[9] = {Red, Orange, Brown, DarkGreen, DarkCyan, Blue, Magenta, Magenta, Red};
 
@@ -34,5 +34,7 @@ export class Xwindow {
   void setWindowTitle(std::string title);
   void drawLogo(int x, int y, int width, int height);
   void drawArrowKeys(int x, int y, int keySize);
+  void drawTetrisBackground(int width, int height);
+  void drawRoundedRectangle(int x, int y, int width, int height, int radius, int color);
 };
 

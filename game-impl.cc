@@ -456,21 +456,16 @@ void Game::render() {
     std::cout << "\n" << BOLD << WHITE << "Enter command: > " << RESET;
 
     if (!textOnly) {
-        // Set game info on graphics displays before notifying
-        graphicsDisplay1->setGameInfo(
+        graphicsDisplay1->renderWithInfo(
             level1->getLevelNumber(),
             score1->getCurrentScore(),
             score1->getHighScore()
         );
-        graphicsDisplay2->setGameInfo(
+        graphicsDisplay2->renderWithInfo(
             level2->getLevelNumber(),
             score2->getCurrentScore(),
             score2->getHighScore()
         );
-
-        // Notify observers to trigger rendering
-        board1->notifyObservers();
-        board2->notifyObservers();
     }
 }
 

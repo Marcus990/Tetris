@@ -29,9 +29,9 @@ Xwindow::Xwindow(int width, int height)
 
   XColor xcolour;
   Colormap cmap = DefaultColormap(d,s);
-  char color_vals[12][12]={"white", "black", "red", "green", "blue", "cyan", "yellow", "magenta", "orange", "brown", "darkgreen", "darkcyan"};
+  char color_vals[16][16]={"white", "black", "red", "green", "blue", "cyan", "yellow", "magenta", "orange", "brown", "darkgreen", "darkcyan", "midnightblue", "navyblue", "royalblue", "mediumblue"};
 
-  for(int i=0; i < 12; ++i) {
+  for(int i=0; i < 16; ++i) {
       XParseColor(d,cmap,color_vals[i],&xcolour);
       XAllocColor(d,cmap,&xcolour);
       colours[i]=xcolour.pixel;
@@ -75,7 +75,7 @@ void Xwindow::drawStringBlack(int x, int y, string msg) {
 }
 
 void Xwindow::drawStringBlackBold(int x, int y, string msg) {
-  XSetForeground(d, gc, colours[Black]);
+  XSetForeground(d, gc, colours[White]);
   XDrawString(d, pixmap, gc, x, y, msg.c_str(), msg.length());
   XDrawString(d, pixmap, gc, x + 1, y, msg.c_str(), msg.length());
   XDrawString(d, pixmap, gc, x, y + 1, msg.c_str(), msg.length());
@@ -178,6 +178,51 @@ void Xwindow::drawArrowKeys(int x, int y, int keySize) {
   rightTriangle[2].x = rightX + 13;
   rightTriangle[2].y = centerY + keySize/2 + 8;
   XFillPolygon(d, pixmap, gc, rightTriangle, 3, Convex, CoordModeOrigin);
+  
+  XSetForeground(d, gc, colours[White]);
+}
+
+void Xwindow::drawRoundedRectangle(int x, int y, int width, int height, int radius, int color) {
+  XSetForeground(d, gc, colours[color]);
+  
+  int diameter = radius * 2;
+  int lineWidth = 2;
+  XSetLineAttributes(d, gc, lineWidth, LineSolid, CapRound, JoinRound);
+  
+  XDrawLine(d, pixmap, gc, x + radius + 1, y, x + width - radius - 1, y);
+  XDrawLine(d, pixmap, gc, x + width, y + radius + 1, x + width, y + height - radius - 1);
+  XDrawLine(d, pixmap, gc, x + width - radius - 1, y + height, x + radius + 1, y + height);
+  XDrawLine(d, pixmap, gc, x, y + height - radius - 1, x, y + radius + 1);
+  
+  XDrawArc(d, pixmap, gc, x, y, diameter, diameter, 90 * 64, 90 * 64);
+  XDrawArc(d, pixmap, gc, x + width - diameter, y, diameter, diameter, 0, 90 * 64);
+  XDrawArc(d, pixmap, gc, x + width - diameter, y + height - diameter, diameter, diameter, 270 * 64, 90 * 64);
+  XDrawArc(d, pixmap, gc, x, y + height - diameter, diameter, diameter, 180 * 64, 90 * 64);
+  
+  XSetLineAttributes(d, gc, 1, LineSolid, CapButt, JoinMiter);
+  XSetForeground(d, gc, colours[White]);
+}
+
+void Xwindow::drawTetrisBackground(int width, int height) {
+  int blockSize = 25;
+  int colors[] = {MidnightBlue, NavyBlue, RoyalBlue, MediumBlue};
+  
+  for (int y = 0; y < height; y += blockSize) {
+    for (int x = 0; x < width; x += blockSize) {
+      int colorIndex = ((x / blockSize) + (y / blockSize) * 3) % 4;
+      XSetForeground(d, gc, colours[colors[colorIndex]]);
+      XFillRectangle(d, pixmap, gc, x, y, blockSize, blockSize);
+    }
+  }
+  
+  int patternOffset = blockSize / 2;
+  for (int y = patternOffset; y < height; y += blockSize * 2) {
+    for (int x = patternOffset; x < width; x += blockSize * 2) {
+      int colorIndex = ((x / (blockSize * 2)) + (y / (blockSize * 2)) * 3) % 4;
+      XSetForeground(d, gc, colours[colors[colorIndex]]);
+      XFillRectangle(d, pixmap, gc, x, y, blockSize, blockSize);
+    }
+  }
   
   XSetForeground(d, gc, colours[White]);
 }

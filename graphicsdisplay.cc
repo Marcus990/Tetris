@@ -19,9 +19,6 @@ export class GraphicsDisplay : public IObserver {
     int headerHeight;
     bool blindMode;
     std::string playerName;
-    int cachedLevel;
-    int cachedScore;
-    int cachedHighScore;
 
     int getColor(char type) const;
     void draw3DBlock(int row, int col, int color);
@@ -32,7 +29,6 @@ public:
     void update() override;
     void setBlindMode(bool blind);
     void setBoard(Board* b);
-    void setGameInfo(int level, int score, int highScore);
     void drawBlock(int row, int col, int color);
     void render();
     void renderWithInfo(int level, int score, int highScore);
