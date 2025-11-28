@@ -35,7 +35,7 @@ public:
 export class JBlock : public Block
 {
 public:
-    JBlock(int level, int id, int startX = 3, int startY = RESERVE_ROWS)
+    JBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y)
         : Block('J', level, id, startX, startY)
     {
         cells.push_back({0, 0});
@@ -62,7 +62,7 @@ public:
 export class LBlock : public Block
 {
 public:
-    LBlock(int level, int id, int startX = 3, int startY = RESERVE_ROWS)
+    LBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y)
         : Block('L', level, id, startX, startY)
     {
         cells.push_back({0, 1});
@@ -88,7 +88,7 @@ public:
 export class OBlock : public Block
 {
 public:
-    OBlock(int level, int id, int startX = 3, int startY = RESERVE_ROWS)
+    OBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y)
         : Block('O', level, id, startX, startY)
     {
         cells.push_back({0, 0});
@@ -108,7 +108,7 @@ public:
 export class SBlock : public Block
 {
 public:
-    SBlock(int level, int id, int startX = 3, int startY = RESERVE_ROWS)
+    SBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y)
         : Block('S', level, id, startX, startY)
     {
         cells.push_back({0, 1});
@@ -134,7 +134,7 @@ public:
 export class ZBlock : public Block
 {
 public:
-    ZBlock(int level, int id, int startX = 3, int startY = RESERVE_ROWS)
+    ZBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y)
         : Block('Z', level, id, startX, startY)
     {
         cells.push_back({0, 0});
@@ -160,7 +160,7 @@ public:
 export class TBlock : public Block
 {
 public:
-    TBlock(int level, int id, int startX = 3, int startY = RESERVE_ROWS)
+    TBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y)
         : Block('T', level, id, startX, startY)
     {
         cells.push_back({0, 1});
@@ -185,7 +185,7 @@ public:
 export class SingleBlock : public Block
 {
 public:
-    SingleBlock(int level, int id, int startX = 5, int startY = RESERVE_ROWS)
+    SingleBlock(int level, int id, int startX = CENTER_COLUMN, int startY = SPAWN_Y)
         : Block('*', level, id, startX, startY)
     {
         cells.push_back({0, 0});
