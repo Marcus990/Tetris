@@ -28,12 +28,32 @@ void GraphicsDisplay::draw3DBlock(int row, int col, int color) {
     int x = offsetX + col * blockSize;
     int y = offsetY + row * blockSize;
 
-    window->fillRectangle(x + BLOCK_3D_INSET, y + BLOCK_3D_INSET, 
+    window->fillRectangle(x + BLOCK_3D_INSET, y + BLOCK_3D_INSET,
                         blockSize - BLOCK_3D_INSET * 2, blockSize - BLOCK_3D_INSET * 2, color);
     window->fillRectangle(x, y, blockSize, BLOCK_3D_INSET, Xwindow::White);
     window->fillRectangle(x, y, BLOCK_3D_INSET, blockSize, Xwindow::White);
     window->fillRectangle(x, y + blockSize - BLOCK_3D_SHADOW, blockSize, BLOCK_3D_SHADOW, Xwindow::Black);
     window->fillRectangle(x + blockSize - BLOCK_3D_SHADOW, y, BLOCK_3D_SHADOW, blockSize, Xwindow::Black);
+}
+
+void GraphicsDisplay::drawGhostBlock(int row, int col, int color) {
+    int x = offsetX + col * blockSize;
+    int y = offsetY + row * blockSize;
+
+    // Draw only the outline/border (no fill)
+    // Top border
+    window->fillRectangle(x, y, blockSize, BLOCK_3D_INSET, color);
+    // Left border
+    window->fillRectangle(x, y, BLOCK_3D_INSET, blockSize, color);
+    // Bottom border
+    window->fillRectangle(x, y + blockSize - BLOCK_3D_SHADOW, blockSize, BLOCK_3D_SHADOW, color);
+    // Right border
+    window->fillRectangle(x + blockSize - BLOCK_3D_SHADOW, y, BLOCK_3D_SHADOW, blockSize, color);
+
+    // Keep interior black (transparent look)
+    window->fillRectangle(x + BLOCK_3D_INSET, y + BLOCK_3D_INSET,
+                        blockSize - BLOCK_3D_INSET - BLOCK_3D_SHADOW,
+                        blockSize - BLOCK_3D_INSET - BLOCK_3D_SHADOW, Xwindow::Black);
 }
 
 void GraphicsDisplay::drawEmptyCell(int row, int col) {
@@ -146,6 +166,20 @@ void GraphicsDisplay::render() {
 
     auto display = grid;
 
+    // Overlay ghost piece first (lowercase letters)
+    if (current) {
+        auto ghostCells = board->getGhostPosition();
+        for (const auto& cell : ghostCells) {
+            int row = cell.first;
+            int col = cell.second;
+            if (row >= 0 && row < TOTAL_ROWS && col >= 0 && col < BOARD_WIDTH) {
+                display[row][col].setType(tolower(current->getType()));
+                display[row][col].setFilled(true);
+            }
+        }
+    }
+
+    // Overlay current block (overwrites ghost if at same position)
     if (current) {
         auto cells = current->getAbsoluteCells();
         for (const auto& cell : cells) {
@@ -161,8 +195,19 @@ void GraphicsDisplay::render() {
     for (int row = 0; row < TOTAL_ROWS; ++row) {
         for (int col = 0; col < BOARD_WIDTH; ++col) {
             if (display[row][col].isFilled()) {
-                int color = getColor(display[row][col].getType());
-                draw3DBlock(row, col, color);
+                char cellType = display[row][col].getType();
+
+                // Check if this is a ghost cell (lowercase)
+                if (cellType >= 'a' && cellType <= 'z') {
+                    // Ghost piece - draw as outline only
+                    char upperType = toupper(cellType);
+                    int color = getColor(upperType);
+                    drawGhostBlock(row, col, color);
+                } else {
+                    // Regular filled cell
+                    int color = getColor(cellType);
+                    draw3DBlock(row, col, color);
+                }
             } else {
                 drawEmptyCell(row, col);
             }

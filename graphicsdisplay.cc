@@ -24,6 +24,7 @@ export class GraphicsDisplay : public IObserver {
 
     int getColor(char type) const;
     void draw3DBlock(int row, int col, int color);
+    void drawGhostBlock(int row, int col, int color);
     void drawEmptyCell(int row, int col);
 
 public:
