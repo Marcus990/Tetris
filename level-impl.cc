@@ -1,10 +1,9 @@
-module;
-#include <memory>
-#include <random>
-#include <fstream>
-#include <vector>
-#include <string>
 module level;
+import <memory>;
+import <random>;
+import <fstream>;
+import <vector>;
+import <string>;
 import block;
 import blocks;
 import constants;

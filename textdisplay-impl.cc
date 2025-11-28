@@ -1,8 +1,7 @@
-module;
-#include <iostream>
-#include <vector>
-#include <string>
 module textdisplay;
+import <iostream>;
+import <vector>;
+import <string>;
 import observer;
 import board;
 import block;

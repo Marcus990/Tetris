@@ -1,8 +1,7 @@
-module;
-#include <vector>
-#include <utility>
-#include <algorithm>
 module block;
+import <vector>;
+import <utility>;
+import <algorithm>;
 
 // Block constructor
 Block::Block(char t, int level, int id, int startX, int startY)
@@ -31,8 +30,7 @@ std::vector<std::pair<int, int>> Block::getAbsoluteCells() const
 }
 
 // Movement
-void Block::move(int dx, int dy)
-{
+void Block::move(int dx, int dy) {
     posX += dx;
     posY += dy;
 }

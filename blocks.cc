@@ -15,8 +15,7 @@ public:
 
 // J-block:
 // #
-// #
-// ##
+// ###
 export class JBlock : public Block
 {
 public:
@@ -27,8 +26,7 @@ public:
 
 // L-block:
 //   #
-//   #
-//  ##
+// ###
 export class LBlock : public Block
 {
 public:

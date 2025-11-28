@@ -1,13 +1,12 @@
-module;
-#include <iostream>
-#include <string>
-#include <map>
-#include <vector>
-#include <memory>
-#include <algorithm>
-#include <cctype>
-#include <fstream>
 module command;
+import <iostream>;
+import <string>;
+import <map>;
+import <vector>;
+import <memory>;
+import <algorithm>;
+import <cctype>;
+import <fstream>;
 import game;
 import board;
 import level;
@@ -24,8 +23,13 @@ void LeftCommand::execute(Game* game) {
     board->moveLeft();
 
     // Apply heavy effect if active (from level or special action)
+    // Level heavy = 1 drop, Heavy effect = 2 drops, they add together
     Level* level = game->getCurrentLevel();
-    if (level->isHeavy() || board->hasHeavyEffect()) {
+    int heavyDrops = 0;
+    if (level->isHeavy()) heavyDrops += 1;
+    if (board->hasHeavyEffect()) heavyDrops += HEAVY_EXTRA_DROP;
+
+    for (int i = 0; i < heavyDrops; ++i) {
         board->moveDown();
     }
 }
@@ -36,8 +40,13 @@ void RightCommand::execute(Game* game) {
     board->moveRight();
 
     // Apply heavy effect if active (from level or special action)
+    // Level heavy = 1 drop, Heavy effect = 2 drops, they add together
     Level* level = game->getCurrentLevel();
-    if (level->isHeavy() || board->hasHeavyEffect()) {
+    int heavyDrops = 0;
+    if (level->isHeavy()) heavyDrops += 1;
+    if (board->hasHeavyEffect()) heavyDrops += HEAVY_EXTRA_DROP;
+
+    for (int i = 0; i < heavyDrops; ++i) {
         board->moveDown();
     }
 }
@@ -46,6 +55,17 @@ void RightCommand::execute(Game* game) {
 void DownCommand::execute(Game* game) {
     Board* board = game->getCurrentBoard();
     board->moveDown();
+
+    // Apply heavy effect if active (from level or special action)
+    // Level heavy = 1 drop, Heavy effect = 2 drops, they add together
+    Level* level = game->getCurrentLevel();
+    int heavyDrops = 0;
+    if (level->isHeavy()) heavyDrops += 1;
+    if (board->hasHeavyEffect()) heavyDrops += HEAVY_EXTRA_DROP;
+
+    for (int i = 0; i < heavyDrops; ++i) {
+        board->moveDown();
+    }
 }
 
 // DropCommand implementation
@@ -59,8 +79,13 @@ void RotateClockwiseCommand::execute(Game* game) {
     board->rotate(true);
 
     // Apply heavy effect if active (from level or special action)
+    // Level heavy = 1 drop, Heavy effect = 2 drops, they add together
     Level* level = game->getCurrentLevel();
-    if (level->isHeavy() || board->hasHeavyEffect()) {
+    int heavyDrops = 0;
+    if (level->isHeavy()) heavyDrops += 1;
+    if (board->hasHeavyEffect()) heavyDrops += HEAVY_EXTRA_DROP;
+
+    for (int i = 0; i < heavyDrops; ++i) {
         board->moveDown();
     }
 }
@@ -71,8 +96,13 @@ void RotateCounterClockwiseCommand::execute(Game* game) {
     board->rotate(false);
 
     // Apply heavy effect if active (from level or special action)
+    // Level heavy = 1 drop, Heavy effect = 2 drops, they add together
     Level* level = game->getCurrentLevel();
-    if (level->isHeavy() || board->hasHeavyEffect()) {
+    int heavyDrops = 0;
+    if (level->isHeavy()) heavyDrops += 1;
+    if (board->hasHeavyEffect()) heavyDrops += HEAVY_EXTRA_DROP;
+
+    for (int i = 0; i < heavyDrops; ++i) {
         board->moveDown();
     }
 }
@@ -277,7 +307,7 @@ void CommandInterpreter::executeCommand(const std::string& input) {
     std::string fullCommand = matchCommand(commandStr);
 
     if (fullCommand.empty() || !commands.count(fullCommand)) {
-        // Invalid command - silently ignore
+        std::cout << "Invalid command, use 'help' or 'h' for a list of commands" << "\n";
         return;
     }
 
@@ -299,7 +329,10 @@ void CommandInterpreter::executeCommand(const std::string& input) {
     } else {
         cmd->execute(game);
     }
-    // Note: Drop command switches players internally (done inside drop() method)
+    // Note: Drop command switches players 
+    if (fullCommand == "drop") {
+        game->switchPlayer();
+    }
 
     // Render after command execution
     game->render();

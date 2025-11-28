@@ -1,7 +1,6 @@
-#include <iostream>
-#include <string>
-#include <cstdlib>
-#include <chrono>
+import <iostream>;
+import <string>;
+import <cstdlib>;
 import game;
 import command;
 

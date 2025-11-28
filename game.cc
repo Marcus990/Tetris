@@ -1,7 +1,6 @@
-module;
-#include <memory>
-#include <string>
 export module game;
+import <memory>;
+import <string>;
 import board;
 import block;
 import level;
