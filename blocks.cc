@@ -8,24 +8,9 @@ using namespace GameConstants;
 export class IBlock : public Block
 {
 public:
-    IBlock(int level, int id, int startX = 3, int startY = RESERVE_ROWS)
-        : Block('I', level, id, startX, startY)
-    {
-        cells.push_back({0, 0});
-        cells.push_back({0, 1});
-        cells.push_back({0, 2});
-        cells.push_back({0, 3});
-    }
-
-    void rotateClockwise() override
-    {
-        rotateCellsClockwise();
-    }
-
-    void rotateCounterClockwise() override
-    {
-        rotateCellsCounterClockwise();
-    }
+    IBlock(int level, int id, int startX = 3, int startY = RESERVE_ROWS);
+    void rotateClockwise() override;
+    void rotateCounterClockwise() override;
 };
 
 // J-block:
@@ -35,24 +20,9 @@ public:
 export class JBlock : public Block
 {
 public:
-    JBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y)
-        : Block('J', level, id, startX, startY)
-    {
-        cells.push_back({0, 0});
-        cells.push_back({1, 0});
-        cells.push_back({2, 0});
-        cells.push_back({2, 1});
-    }
-
-    void rotateClockwise() override
-    {
-        rotateCellsClockwise();
-    }
-
-    void rotateCounterClockwise() override
-    {
-        rotateCellsCounterClockwise();
-    }
+    JBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y);
+    void rotateClockwise() override;
+    void rotateCounterClockwise() override;
 };
 
 // L-block:
@@ -62,24 +32,9 @@ public:
 export class LBlock : public Block
 {
 public:
-    LBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y)
-        : Block('L', level, id, startX, startY)
-    {
-        cells.push_back({0, 1});
-        cells.push_back({1, 1});
-        cells.push_back({2, 1});
-        cells.push_back({2, 0});
-    }
-
-    void rotateClockwise() override
-    {
-        rotateCellsClockwise();
-    }
-
-    void rotateCounterClockwise() override
-    {
-        rotateCellsCounterClockwise();
-    }
+    LBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y);
+    void rotateClockwise() override;
+    void rotateCounterClockwise() override;
 };
 
 // O-block:
@@ -88,18 +43,9 @@ public:
 export class OBlock : public Block
 {
 public:
-    OBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y)
-        : Block('O', level, id, startX, startY)
-    {
-        cells.push_back({0, 0});
-        cells.push_back({0, 1});
-        cells.push_back({1, 0});
-        cells.push_back({1, 1});
-    }
-
-    // O-block doesn't rotate
-    void rotateClockwise() override {}
-    void rotateCounterClockwise() override {}
+    OBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y);
+    void rotateClockwise() override;
+    void rotateCounterClockwise() override;
 };
 
 // S-block:
@@ -108,24 +54,9 @@ public:
 export class SBlock : public Block
 {
 public:
-    SBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y)
-        : Block('S', level, id, startX, startY)
-    {
-        cells.push_back({0, 1});
-        cells.push_back({0, 2});
-        cells.push_back({1, 0});
-        cells.push_back({1, 1});
-    }
-
-    void rotateClockwise() override
-    {
-        rotateCellsClockwise();
-    }
-
-    void rotateCounterClockwise() override
-    {
-        rotateCellsCounterClockwise();
-    }
+    SBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y);
+    void rotateClockwise() override;
+    void rotateCounterClockwise() override;
 };
 
 // Z-block:
@@ -134,24 +65,9 @@ public:
 export class ZBlock : public Block
 {
 public:
-    ZBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y)
-        : Block('Z', level, id, startX, startY)
-    {
-        cells.push_back({0, 0});
-        cells.push_back({0, 1});
-        cells.push_back({1, 1});
-        cells.push_back({1, 2});
-    }
-
-    void rotateClockwise() override
-    {
-        rotateCellsClockwise();
-    }
-
-    void rotateCounterClockwise() override
-    {
-        rotateCellsCounterClockwise();
-    }
+    ZBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y);
+    void rotateClockwise() override;
+    void rotateCounterClockwise() override;
 };
 
 // T-block:
@@ -160,24 +76,9 @@ public:
 export class TBlock : public Block
 {
 public:
-    TBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y)
-        : Block('T', level, id, startX, startY)
-    {
-        cells.push_back({0, 1});
-        cells.push_back({1, 0});
-        cells.push_back({1, 1});
-        cells.push_back({1, 2});
-    }
-
-    void rotateClockwise() override
-    {
-        rotateCellsClockwise();
-    }
-
-    void rotateCounterClockwise() override
-    {
-        rotateCellsCounterClockwise();
-    }
+    TBlock(int level, int id, int startX = SPAWN_X, int startY = SPAWN_Y);
+    void rotateClockwise() override;
+    void rotateCounterClockwise() override;
 };
 
 // Single-cell block (for Level 4 center drops)
@@ -185,13 +86,7 @@ public:
 export class SingleBlock : public Block
 {
 public:
-    SingleBlock(int level, int id, int startX = CENTER_COLUMN, int startY = SPAWN_Y)
-        : Block('*', level, id, startX, startY)
-    {
-        cells.push_back({0, 0});
-    }
-
-    // Single block doesn't rotate
-    void rotateClockwise() override {}
-    void rotateCounterClockwise() override {}
+    SingleBlock(int level, int id, int startX = CENTER_COLUMN, int startY = SPAWN_Y);
+    void rotateClockwise() override;
+    void rotateCounterClockwise() override;
 };

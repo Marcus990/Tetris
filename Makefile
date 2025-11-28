@@ -5,9 +5,11 @@ LDFLAGS = -L/opt/X11/lib -lX11
 
 EXEC = biquadris
 
-SOURCES = constants.cc cell.cc block.cc blocks.cc observer.cc scorekeeper.cc \
-          level.cc effect.cc board.cc window.cc window-impl.cc textdisplay.cc \
-          graphicsdisplay.cc game.cc command.cc main.cc
+SOURCES = constants.cc cell.cc block.cc block-impl.cc blocks.cc blocks-impl.cc \
+          observer.cc scorekeeper.cc level.cc level-impl.cc effect.cc \
+          board.cc board-impl.cc window.cc window-impl.cc \
+          textdisplay.cc textdisplay-impl.cc graphicsdisplay.cc graphicsdisplay-impl.cc \
+          game.cc game-impl.cc command.cc command-impl.cc main.cc
 
 OBJECTS = $(SOURCES:.cc=.o)
 
