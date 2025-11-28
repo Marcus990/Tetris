@@ -1,14 +1,14 @@
-// constants.cc - Game constants module interface
+// Game constants module interface
 export module constants;
 
 export namespace GameConstants {
-    // Board dimensions
+    // Dimensions of the board
     constexpr int BOARD_WIDTH = 11;
     constexpr int BOARD_HEIGHT = 15;
     constexpr int RESERVE_ROWS = 3;
-    constexpr int TOTAL_ROWS = BOARD_HEIGHT + RESERVE_ROWS;  // 18
+    constexpr int TOTAL_ROWS = BOARD_HEIGHT + RESERVE_ROWS;  
     
-    // Block properties
+    // Properties of block
     constexpr int CELLS_PER_BLOCK = 4;
     constexpr int NUM_BLOCK_TYPES = 7;
     constexpr int NUM_ROTATION_STATES = 4;
@@ -19,13 +19,13 @@ export namespace GameConstants {
     
     // Level 4 center block settings
     constexpr int BLOCKS_BEFORE_CENTER_DROP = 5;
-    constexpr int CENTER_COLUMN = BOARD_WIDTH / 2;  // 5
+    constexpr int CENTER_COLUMN = BOARD_WIDTH / 2;  
     
-    // Blind effect boundaries (0-indexed from visible area)
-    constexpr int BLIND_COL_START = 2;   // Column 3 in 1-indexed
-    constexpr int BLIND_COL_END = 8;     // Column 9 in 1-indexed
-    constexpr int BLIND_ROW_START = 2;   // Row 3 in 1-indexed
-    constexpr int BLIND_ROW_END = 11;    // Row 12 in 1-indexed
+    // Blind effect boundaries 
+    constexpr int BLIND_COL_START = 2;   
+    constexpr int BLIND_COL_END = 8;     
+    constexpr int BLIND_ROW_START = 2;   
+    constexpr int BLIND_ROW_END = 11;    
     
     // Heavy effect settings
     constexpr int HEAVY_EXTRA_DROP = 2;
@@ -35,8 +35,8 @@ export namespace GameConstants {
     constexpr int ROWS_FOR_SPECIAL_ACTION = 2;
     
     // Block spawn position
-    constexpr int SPAWN_X = 0;
-    constexpr int SPAWN_Y = RESERVE_ROWS;  // Just below reserve rows
+    constexpr int SPAWN_X = 3;
+    constexpr int SPAWN_Y = RESERVE_ROWS;  
     
     // Display characters
     constexpr char EMPTY_CELL = ' ';

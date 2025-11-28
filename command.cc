@@ -360,6 +360,10 @@ public:
             cmd->execute(game);
         }
         // Note: Only drop command switches players (done inside drop() method)
+        if (fullCommand == "drop") {
+            game->switchPlayer();
+        }
+
         // Render after command execution
         game->render();
     }
