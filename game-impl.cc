@@ -521,19 +521,23 @@ bool Game::isGameRunning() const { return isRunning; }
 
 void Game::applySpecialAction(const std::string& action, char blockType) {
     Board* opponent = getOpponentBoard();
+    int opponentNum = (currentPlayer == PLAYER_ONE) ? 2 : 1;
 
     if (action == "blind") {
         auto effect = new BlindEffect(1);
         opponent->addEffect(effect);
+        std::cout << "Blind effect activated on Player " << opponentNum << "!\n";
         // Blind mode will be synchronized automatically in drop()
     }
     else if (action == "heavy") {
         auto effect = new HeavyEffect();
         opponent->addEffect(effect);
+        std::cout << "Heavy effect activated on Player " << opponentNum << "!\n";
     }
     else if (action == "force") {
         // Force effect replaces opponent's current block immediately
         opponent->replaceCurrentBlock(blockType);
+        std::cout << "Force effect activated on Player " << opponentNum << "! Block type: " << blockType << "\n";
     }
 }
 
