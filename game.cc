@@ -27,6 +27,7 @@ export class Game {
     int currentPlayer;
     bool isRunning;
     bool textOnly;
+    bool shouldStopExecution;
     unsigned int randomSeed;
     std::string scriptFile1;
     std::string scriptFile2;
@@ -34,8 +35,8 @@ export class Game {
 
 public:
     Game(unsigned int seed = 0, int level = 0,
-         const std::string& script1 = "sequence1.txt",
-         const std::string& script2 = "sequence2.txt",
+         const std::string& script1 = "biquadris_sequence1.txt",
+         const std::string& script2 = "biquadris_sequence2.txt",
          bool textMode = false);
 
     void createLevels(int levelNum);
@@ -53,4 +54,6 @@ public:
     void levelUp();
     void levelDown();
     void createPlayerLevel(int player, int levelNum);
+    bool shouldStopExecutingCommands() const;
+    void clearStopExecutionFlag();
 };

@@ -40,15 +40,17 @@ void GraphicsDisplay::drawEmptyCell(int row, int col) {
     int x = offsetX + col * blockSize;
     int y = offsetY + row * blockSize;
 
-    window->fillRectangle(x + EMPTY_CELL_INSET, y + EMPTY_CELL_INSET, 
+    window->fillRectangle(x + EMPTY_CELL_INSET, y + EMPTY_CELL_INSET,
                         blockSize - EMPTY_CELL_INSET * 2, blockSize - EMPTY_CELL_INSET * 2, Xwindow::Black);
-    
-    if (row >= RESERVE_ROWS) {
-        window->fillRectangle(x, y, blockSize, GRID_LINE_THICKNESS, Xwindow::White);
-        window->fillRectangle(x, y, GRID_LINE_THICKNESS, blockSize, Xwindow::White);
-        window->fillRectangle(x, y + blockSize - GRID_LINE_THICKNESS, blockSize, GRID_LINE_THICKNESS, Xwindow::White);
-        window->fillRectangle(x + blockSize - GRID_LINE_THICKNESS, y, GRID_LINE_THICKNESS, blockSize, Xwindow::White);
-    }
+
+    // Draw grid lines for all rows (including reserve rows)
+    // Reserve rows use a dimmer color to distinguish them
+    int gridColor = (row < RESERVE_ROWS) ? Xwindow::DarkCyan : Xwindow::White;
+
+    window->fillRectangle(x, y, blockSize, GRID_LINE_THICKNESS, gridColor);
+    window->fillRectangle(x, y, GRID_LINE_THICKNESS, blockSize, gridColor);
+    window->fillRectangle(x, y + blockSize - GRID_LINE_THICKNESS, blockSize, GRID_LINE_THICKNESS, gridColor);
+    window->fillRectangle(x + blockSize - GRID_LINE_THICKNESS, y, GRID_LINE_THICKNESS, blockSize, gridColor);
 }
 
 GraphicsDisplay::GraphicsDisplay(Board* b, std::string name, int width, int height)
@@ -181,6 +183,11 @@ void GraphicsDisplay::render() {
         
         window->fillRectangle(blindX, blindY, blindWidth, blindHeight, Xwindow::White);
     }
+    
+    // Draw separator line between reserve rows and visible play area
+    int separatorY = offsetY + RESERVE_ROWS * blockSize;
+    int boardPixelWidth = BOARD_WIDTH * blockSize;
+    window->fillRectangle(offsetX, separatorY - 1, boardPixelWidth, 2, Xwindow::Yellow);
 }
 
 void GraphicsDisplay::renderWithInfo(int level, int score, int highScore) {

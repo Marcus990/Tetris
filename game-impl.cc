@@ -19,7 +19,7 @@ Game::Game(unsigned int seed, int level,
      const std::string& script2,
      bool textMode)
     : currentPlayer(PLAYER_ONE), isRunning(true), textOnly(textMode),
-      randomSeed(seed), scriptFile1(script1), scriptFile2(script2),
+      shouldStopExecution(false), randomSeed(seed), scriptFile1(script1), scriptFile2(script2),
       startLevel(level) {
 
     // Create boards
@@ -200,25 +200,37 @@ bool Game::drop() {
     // Update blind mode displays for both players based on their board state
     bool isBlind1 = board1->hasBlindEffect();
     textDisplay1->setBlindMode(isBlind1);
+    
     if (!textOnly)
         graphicsDisplay1->setBlindMode(isBlind1);
 
     bool isBlind2 = board2->hasBlindEffect();
     textDisplay2->setBlindMode(isBlind2);
+
     if (!textOnly)
         graphicsDisplay2->setBlindMode(isBlind2);
 
+    // Beep sound
+    std::cout << '\a';
+    
     // Check game over
     if (board->isGameOver()) {
-        isRunning = false;
-        return false;
+        // Determine winner (the player who didn't lose)
+        ScoreKeeper* winnerScore = (currentPlayer == PLAYER_ONE) ? score2.get() : score1.get();
+
+        // Increment winner's win count
+        winnerScore->incrementWins();
+
+        // Set flag to stop executing remaining multiplied commands
+        shouldStopExecution = true;
+
+        // Automatically restart the game
+        restart();
+        return true;
     }
 
     // Spawn next block
     spawnNextBlock(board);
-
-    // Beep sound
-    std::cout << '\a';
 
     return true;
 }
@@ -294,6 +306,18 @@ void Game::render() {
     std::cout << MAGENTA << " High:  " << BOLD << WHITE << score2->getHighScore() << RESET;
     std::string highStr2 = std::to_string(score2->getHighScore());
     for (size_t i = highStr2.length(); i < 16; ++i)
+        std::cout << " ";
+    std::cout << BOLD << CYAN << "║\n" << RESET;
+
+    std::cout << BOLD << CYAN << "║" << RESET;
+    std::cout << BLUE << " Wins:  " << BOLD << WHITE << score1->getWins() << RESET;
+    std::string winsStr1 = std::to_string(score1->getWins());
+    for (size_t i = winsStr1.length(); i < 16; ++i)
+        std::cout << " ";
+    std::cout << BOLD << CYAN << "║" << RESET;
+    std::cout << BLUE << " Wins:  " << BOLD << WHITE << score2->getWins() << RESET;
+    std::string winsStr2 = std::to_string(score2->getWins());
+    for (size_t i = winsStr2.length(); i < 16; ++i)
         std::cout << " ";
     std::cout << BOLD << CYAN << "║\n" << RESET;
 
@@ -592,4 +616,12 @@ void Game::createPlayerLevel(int player, int levelNum) {
             level2 = std::make_unique<Level4>(randomSeed + 1);
         board2->setLevel(level2.get());
     }
+}
+
+bool Game::shouldStopExecutingCommands() const {
+    return shouldStopExecution;
+}
+
+void Game::clearStopExecutionFlag() {
+    shouldStopExecution = false;
 }
