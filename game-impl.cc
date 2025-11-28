@@ -299,153 +299,28 @@ void Game::render() {
 
     std::cout << BOLD << CYAN << "╠════════════════════════╬════════════════════════╣\n" << RESET;
 
-    // Get both board grids
-    const auto& grid1 = board1->getGrid();
-    const auto& grid2 = board2->getGrid();
-
-    // Get current blocks
-    Block* current1 = board1->getCurrentBlock();
-    Block* current2 = board2->getCurrentBlock();
-
-    // Create display grids with current blocks overlaid
-    auto display1 = grid1;
-    auto display2 = grid2;
-
-    if (current1) {
-        auto cells = current1->getAbsoluteCells();
-        for (const auto& cell : cells) {
-            int row = cell.first;
-            int col = cell.second;
-            if (row >= 0 && row < TOTAL_ROWS && col >= 0 && col < BOARD_WIDTH) {
-                display1[row][col].setType(current1->getType());
-                display1[row][col].setFilled(true);
-            }
-        }
-    }
-
-    if (current2) {
-        auto cells = current2->getAbsoluteCells();
-        for (const auto& cell : cells) {
-            int row = cell.first;
-            int col = cell.second;
-            if (row >= 0 && row < TOTAL_ROWS && col >= 0 && col < BOARD_WIDTH) {
-                display2[row][col].setType(current2->getType());
-                display2[row][col].setFilled(true);
-            }
-        }
-    }
-
-    // Check blind mode for both boards
-    bool isBlind1 = board1->hasBlindEffect();
-    bool isBlind2 = board2->hasBlindEffect();
-
-    // Helper lambda to get block color
-    auto getBlockColor = [&](char type) -> std::string {
-        switch (type) {
-        case 'I': return CYAN;
-        case 'J': return BLUE;
-        case 'L': return "\033[38;5;208m"; // Orange
-        case 'O': return YELLOW;
-        case 'S': return GREEN;
-        case 'Z': return RED;
-        case 'T': return MAGENTA;
-        case '*': return WHITE;
-        default: return RESET;
-        }
-    };
-
-    // Print boards side by side (include all rows including 3 reserve rows at top)
+    // Print boards side by side using TextDisplay methods
     for (int row = 0; row < TOTAL_ROWS; ++row) {
         std::cout << BOLD << CYAN << "║ " << RESET;
-
-        // Print board 1 row
-        for (int col = 0; col < BOARD_WIDTH; ++col) {
-            if (isBlind1 &&
-                row >= RESERVE_ROWS + BLIND_ROW_START &&
-                row <= RESERVE_ROWS + BLIND_ROW_END &&
-                col >= BLIND_COL_START && col <= BLIND_COL_END) {
-                std::cout << BOLD << RED << "? " << RESET;
-            }
-            else if (display1[row][col].isFilled()) {
-                char type = display1[row][col].getType();
-                std::cout << BOLD << getBlockColor(type) << "█ " << RESET;
-            }
-            else {
-                std::cout << "· ";
-            }
-        }
-
+        std::cout << textDisplay1->renderBoardRow(row);
         std::cout << BOLD << CYAN << " ║ " << RESET;
-
-        // Print board 2 row
-        for (int col = 0; col < BOARD_WIDTH; ++col) {
-            if (isBlind2 &&
-                row >= RESERVE_ROWS + BLIND_ROW_START &&
-                row <= RESERVE_ROWS + BLIND_ROW_END &&
-                col >= BLIND_COL_START && col <= BLIND_COL_END) {
-                std::cout << BOLD << RED << "? " << RESET;
-            }
-            else if (display2[row][col].isFilled()) {
-                char type = display2[row][col].getType();
-                std::cout << BOLD << getBlockColor(type) << "█ " << RESET;
-            }
-            else {
-                std::cout << "· ";
-            }
-        }
-
+        std::cout << textDisplay2->renderBoardRow(row);
         std::cout << BOLD << CYAN << " ║" << RESET << "\n";
     }
 
     std::cout << BOLD << CYAN << "╠════════════════════════╬════════════════════════╣\n" << RESET;
 
-    // Print next blocks
+    // Print next blocks using TextDisplay methods
     std::cout << BOLD << CYAN << "║" << YELLOW << " Next:                  " << CYAN << "║" << YELLOW << " Next:                  " << CYAN << "║\n" << RESET;
 
-    Block* next1 = board1->getNextBlock();
-    Block* next2 = board2->getNextBlock();
+    auto nextPreview1 = textDisplay1->renderNextBlockPreview();
+    auto nextPreview2 = textDisplay2->renderNextBlockPreview();
 
-    std::vector<std::string> g1(3, std::string(4, ' '));
-    std::vector<std::string> g2(3, std::string(4, ' '));
-
-    if (next1) {
-        for (auto& cell : next1->getCells()) {
-            int r = cell.first;
-            int c = cell.second;
-            if (r >= 0 && r < 3 && c >= 0 && c < 4)
-                g1[r][c] = next1->getType();
-        }
-    }
-
-    if (next2) {
-        for (auto& cell : next2->getCells()) {
-            int r = cell.first;
-            int c = cell.second;
-            if (r >= 0 && r < 3 && c >= 0 && c < 4)
-                g2[r][c] = next2->getType();
-        }
-    }
-
-    // Print next blocks side-by-side
     for (int row = 0; row < 3; row++) {
         std::cout << BOLD << CYAN << "║ " << RESET;
-        for (int col = 0; col < 4; col++) {
-            if (g1[row][col] != ' ') {
-                std::cout << BOLD << getBlockColor(g1[row][col]) << "█ " << RESET;
-            }
-            else {
-                std::cout << "  ";
-            }
-        }
+        std::cout << nextPreview1[row];
         std::cout << "               " << BOLD << CYAN << "║ " << RESET;
-        for (int col = 0; col < 4; col++) {
-            if (g2[row][col] != ' ') {
-                std::cout << BOLD << getBlockColor(g2[row][col]) << "█ " << RESET;
-            }
-            else {
-                std::cout << "  ";
-            }
-        }
+        std::cout << nextPreview2[row];
         std::cout << "               " << BOLD << CYAN << "║\n" << RESET;
     }
 
