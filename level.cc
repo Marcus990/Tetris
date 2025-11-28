@@ -18,18 +18,31 @@ protected:
     int nonRandomIndex;
 
 public:
+    // Constructor
     Level(int num);
+    
+    // Virtual destructor
     virtual ~Level() = default;
 
+    // Getter for level number
     int getLevelNumber() const;
+
+    // Pure virtual methods to be implemented by derived classes
     virtual std::unique_ptr<Block> generateBlock(int blockId) = 0;
     virtual bool isHeavy() const;
     virtual std::unique_ptr<Block> createCenterBlock(int blockId);
 
+    // Set random or non-random mode
     void setRandom(bool random);
     void setNonRandom(const std::string& filename);
+
+    // Load non-random sequence from file
     void loadNonRandomSequence();
+
+    // Get next block type from non-random sequence
     char getNextNonRandomBlock();
+
+    // Factory method to create block from type
     std::unique_ptr<Block> createBlockFromType(char type, int blockId);
 };
 
