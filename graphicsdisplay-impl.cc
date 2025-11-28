@@ -102,13 +102,6 @@ void GraphicsDisplay::setBlindMode(bool blind) {
 void GraphicsDisplay::setBoard(Board* b) {
     board = b;
 }
-
-void GraphicsDisplay::drawBlock(int row, int col, int color) {
-    int x = offsetX + col * blockSize;
-    int y = offsetY + row * blockSize;
-    window->fillRectangle(x, y, blockSize, blockSize, color);
-}
-
 void GraphicsDisplay::render() {
     const auto& grid = board->getGrid();
     Block* current = board->getCurrentBlock();

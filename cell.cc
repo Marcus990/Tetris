@@ -15,10 +15,4 @@ public:
     void setType(char t) { type = t; }
     void setFilled(bool f) { filled = f; }
     void setBlockId(int id) { blockId = id; }
-
-    void clear() { // Default values for cell
-        type = ' ';
-        filled = false;
-        blockId = -1;
-    }
 };

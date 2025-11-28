@@ -34,8 +34,6 @@ public:
             turnsLeft--;
         }
     }
-
-    int getTurnsLeft() const { return turnsLeft; }
 };
 
 // Heavy effect - makes blocks drop extra after each move

@@ -12,7 +12,7 @@ import effect;
 
 using namespace GameConstants;
 
-export class Board {
+export class Board : public ISubject {
     std::vector<std::vector<Cell>> grid;
     std::unique_ptr<Block> currentBlock;
     std::unique_ptr<Block> nextBlock;
