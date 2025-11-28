@@ -86,7 +86,7 @@ export namespace GameConstants {
     constexpr int NINTENDO_PILL_PADDING_X = 12;
     constexpr int NINTENDO_PILL_PADDING_Y = 6;
     constexpr int NINTENDO_PILL_RADIUS = 8;
-    constexpr int NINTENDO_TEXT_X_OFFSET = 0;
+    constexpr int NINTENDO_TEXT_X_OFFSET = 4;
     
     // NEXT Panel Layout Constants
     constexpr int NEXT_TEXT_WIDTH = 40;
