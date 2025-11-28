@@ -15,7 +15,8 @@ import constants;
 
 using namespace GameConstants;
 
-export class Game {
+export class Game
+{
     std::unique_ptr<Board> board1;
     std::unique_ptr<Board> board2;
     std::unique_ptr<Level> level1;
@@ -433,9 +434,9 @@ public:
             }
         };
 
-        // Print boards side by side (including reserve rows - all 18 rows)
+        // Print boards side by side (skip reserve rows, show only visible 15 rows)
         // Each cell is 2 chars, 11 columns = 22 chars, plus 1 space padding each side = 24
-        for (int row = 0; row < TOTAL_ROWS; ++row)
+        for (int row = RESERVE_ROWS; row < TOTAL_ROWS; ++row)
         {
             std::cout << BOLD << CYAN << "║ " << RESET;
 
