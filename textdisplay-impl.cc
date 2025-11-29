@@ -195,23 +195,23 @@ std::vector<std::string> TextDisplay::renderNextBlockPreview() const {
     const std::string BOLD = "\033[1m";
     const std::string RESET = "\033[0m";
 
-    std::vector<std::string> preview(3);
+    std::vector<std::string> preview(NEXT_PREVIEW_ROWS);
     Block* next = board->getNextBlock();
 
-    std::vector<std::string> grid(3, std::string(4, ' '));
+    std::vector<std::string> grid(NEXT_PREVIEW_ROWS, std::string(NEXT_PREVIEW_COLS, ' '));
 
     if (next) {
         for (auto& cell : next->getCells()) {
             int r = cell.first;
             int c = cell.second;
-            if (r >= 0 && r < 3 && c >= 0 && c < 4)
+            if (r >= 0 && r < NEXT_PREVIEW_ROWS && c >= 0 && c < NEXT_PREVIEW_COLS)
                 grid[r][c] = next->getType();
         }
     }
 
-    for (int row = 0; row < 3; row++) {
+    for (int row = 0; row < NEXT_PREVIEW_ROWS; row++) {
         std::string line;
-        for (int col = 0; col < 4; col++) {
+        for (int col = 0; col < NEXT_PREVIEW_COLS; col++) {
             if (grid[row][col] != ' ') {
                 line += BOLD + getBlockColor(grid[row][col]) + "█ " + RESET;
             }

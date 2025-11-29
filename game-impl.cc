@@ -293,52 +293,52 @@ void Game::render() {
 
     std::cout << BOLD << CYAN << "╠════════════════════════╬════════════════════════╣\n" << RESET;
 
-    // Stats - pad to 24 chars per section
+    // Stats - pad to STAT_FIELD_WIDTH chars per section
     std::cout << BOLD << CYAN << "║" << RESET;
     std::cout << YELLOW << " Level: " << BOLD << WHITE << level1->getLevelNumber() << RESET;
     std::string lvlStr1 = std::to_string(level1->getLevelNumber());
-    for (size_t i = lvlStr1.length(); i < 16; ++i)
+    for (size_t i = lvlStr1.length(); i < STAT_FIELD_WIDTH; ++i)
         std::cout << " ";
     std::cout << BOLD << CYAN << "║" << RESET;
     std::cout << YELLOW << " Level: " << BOLD << WHITE << level2->getLevelNumber() << RESET;
     std::string lvlStr2 = std::to_string(level2->getLevelNumber());
-    for (size_t i = lvlStr2.length(); i < 16; ++i)
+    for (size_t i = lvlStr2.length(); i < STAT_FIELD_WIDTH; ++i)
         std::cout << " ";
     std::cout << BOLD << CYAN << "║\n" << RESET;
 
     std::cout << BOLD << CYAN << "║" << RESET;
     std::cout << GREEN << " Score: " << BOLD << WHITE << score1->getCurrentScore() << RESET;
     std::string scoreStr1 = std::to_string(score1->getCurrentScore());
-    for (size_t i = scoreStr1.length(); i < 16; ++i)
+    for (size_t i = scoreStr1.length(); i < STAT_FIELD_WIDTH; ++i)
         std::cout << " ";
     std::cout << BOLD << CYAN << "║" << RESET;
     std::cout << GREEN << " Score: " << BOLD << WHITE << score2->getCurrentScore() << RESET;
     std::string scoreStr2 = std::to_string(score2->getCurrentScore());
-    for (size_t i = scoreStr2.length(); i < 16; ++i)
+    for (size_t i = scoreStr2.length(); i < STAT_FIELD_WIDTH; ++i)
         std::cout << " ";
     std::cout << BOLD << CYAN << "║\n" << RESET;
 
     std::cout << BOLD << CYAN << "║" << RESET;
     std::cout << MAGENTA << " High:  " << BOLD << WHITE << score1->getHighScore() << RESET;
     std::string highStr1 = std::to_string(score1->getHighScore());
-    for (size_t i = highStr1.length(); i < 16; ++i)
+    for (size_t i = highStr1.length(); i < STAT_FIELD_WIDTH; ++i)
         std::cout << " ";
     std::cout << BOLD << CYAN << "║" << RESET;
     std::cout << MAGENTA << " High:  " << BOLD << WHITE << score2->getHighScore() << RESET;
     std::string highStr2 = std::to_string(score2->getHighScore());
-    for (size_t i = highStr2.length(); i < 16; ++i)
+    for (size_t i = highStr2.length(); i < STAT_FIELD_WIDTH; ++i)
         std::cout << " ";
     std::cout << BOLD << CYAN << "║\n" << RESET;
 
     std::cout << BOLD << CYAN << "║" << RESET;
     std::cout << BLUE << " Wins:  " << BOLD << WHITE << score1->getWins() << RESET;
     std::string winsStr1 = std::to_string(score1->getWins());
-    for (size_t i = winsStr1.length(); i < 16; ++i)
+    for (size_t i = winsStr1.length(); i < STAT_FIELD_WIDTH; ++i)
         std::cout << " ";
     std::cout << BOLD << CYAN << "║" << RESET;
     std::cout << BLUE << " Wins:  " << BOLD << WHITE << score2->getWins() << RESET;
     std::string winsStr2 = std::to_string(score2->getWins());
-    for (size_t i = winsStr2.length(); i < 16; ++i)
+    for (size_t i = winsStr2.length(); i < STAT_FIELD_WIDTH; ++i)
         std::cout << " ";
     std::cout << BOLD << CYAN << "║\n" << RESET;
 
@@ -361,12 +361,12 @@ void Game::render() {
     auto nextPreview1 = textDisplay1->renderNextBlockPreview();
     auto nextPreview2 = textDisplay2->renderNextBlockPreview();
 
-    for (int row = 0; row < 3; row++) {
+    for (int row = 0; row < NEXT_PREVIEW_ROWS; row++) {
         std::cout << BOLD << CYAN << "║ " << RESET;
         std::cout << nextPreview1[row];
-        std::cout << "               " << BOLD << CYAN << "║ " << RESET;
+        std::cout << std::string(NEXT_PREVIEW_SPACING, ' ') << BOLD << CYAN << "║ " << RESET;
         std::cout << nextPreview2[row];
-        std::cout << "               " << BOLD << CYAN << "║\n" << RESET;
+        std::cout << std::string(NEXT_PREVIEW_SPACING, ' ') << BOLD << CYAN << "║\n" << RESET;
     }
 
     std::cout << BOLD << CYAN << "╚════════════════════════╩════════════════════════╝\n" << RESET;

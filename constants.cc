@@ -154,9 +154,15 @@ export namespace GameConstants {
     constexpr int PLAYER_ONE = 0;
     constexpr int PLAYER_TWO = 1;
     constexpr int NUM_PLAYERS = 2;
-    
+
     constexpr int INVALID_BLOCK_ID = -1;
     constexpr int INITIAL_BLOCK_ID = 0;
     constexpr int INITIAL_SCORE = 0;
     constexpr int NEXT_PIECE_PADDING = 8;
+
+    // Text display constants
+    constexpr int STAT_FIELD_WIDTH = 16;  // Width for padding stats in text display
+    constexpr int NEXT_PREVIEW_ROWS = 3;  // Number of rows for next block preview
+    constexpr int NEXT_PREVIEW_COLS = 4;  // Number of columns for next block preview
+    constexpr int NEXT_PREVIEW_SPACING = 15;  // Spacing after next block preview
 }

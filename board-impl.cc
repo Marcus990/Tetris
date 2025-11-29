@@ -20,6 +20,14 @@ Board::Board() : level(nullptr), score(nullptr), nextBlockId(0), blocksSinceLast
     grid.resize(TOTAL_ROWS, std::vector<Cell>(BOARD_WIDTH));
 }
 
+Board::~Board() {
+    // Clean up all active effects to prevent memory leaks
+    for (Effect* effect : activeEffects) {
+        delete effect;
+    }
+    activeEffects.clear();
+}
+
 void Board::attach(IObserver* observer) {
     displays.push_back(observer);
 }

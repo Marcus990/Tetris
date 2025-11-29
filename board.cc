@@ -30,6 +30,7 @@ export class Board : public ISubject {
 
 public:
     Board();
+    ~Board();
 
     // Observer pattern methods
     void attach(IObserver* observer);
